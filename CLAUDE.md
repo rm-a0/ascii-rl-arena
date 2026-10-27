@@ -66,9 +66,13 @@ Say which files you changed. If a file's group is not clear, ask.
 ## Writing
 
 Use the plain voice of ASD-STE100 in docs, doc comments, comments and commit messages:
-one idea per sentence, short sentences, active voice, no filler. Start a doc comment with
-an imperative summary: "Return the hitbox", not "Returns the hitbox". Write only what is
-true now.
+one idea per sentence, short sentences, active voice, no filler. Start a function's doc
+comment with an imperative summary: "Return the hitbox", not "Returns the hitbox". Write
+only what is true now.
+
+Keep docs and comments brief. One line is the default. Write only what the names and
+types do not say: units, directions, limits and the reason for a choice. Do not restate
+the code. Do not document obvious trait impls.
 
 ## Git
 
