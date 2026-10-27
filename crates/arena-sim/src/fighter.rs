@@ -1,6 +1,7 @@
 use crate::{
     action::{Action, Facing},
     physics::{GRAVITY, Vec2},
+    world::Arena,
 };
 
 /// Numbers that do not change during a fight.
@@ -48,7 +49,7 @@ impl Fighter {
     }
 
     /// Advance the fighter by one tick.
-    pub fn update(&mut self, action: Action, ground_y: f32) {
+    pub fn update(&mut self, action: Action, arena: Arena) {
         if let Some(direction) = action.direction {
             self.facing = direction;
         }
@@ -77,10 +78,20 @@ impl Fighter {
 
         self.position += self.velocity;
 
-        if self.position.y <= ground_y {
-            self.position.y = ground_y;
+        if self.position.y <= arena.ground_y {
+            self.position.y = arena.ground_y;
             self.velocity.y = 0.0;
             self.on_ground = true;
+        }
+        if self.position.x <= arena.left_x {
+            self.position.x = arena.left_x;
+            self.velocity.x = 0.0;
+            self.dash_left = 0;
+        }
+        if self.position.x >= arena.right_x {
+            self.position.x = arena.right_x;
+            self.velocity.x = 0.0;
+            self.dash_left = 0;
         }
 
         self.dash_left = self.dash_left.saturating_sub(1);
