@@ -1,5 +1,7 @@
-mod action;
-mod event;
-mod fighter;
+pub mod action;
+pub mod character;
+pub mod event;
+pub mod fighter;
+pub mod mechanic;
 pub mod physics;
-mod world;
+pub mod world;
