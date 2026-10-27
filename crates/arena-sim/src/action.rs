@@ -5,6 +5,17 @@ pub enum Facing {
     Left,
 }
 
+impl Facing {
+    /// Return -1 for left and +1 for right.
+    #[must_use]
+    pub fn sign(self) -> f32 {
+        match self {
+            Facing::Left => -1.0,
+            Facing::Right => 1.0,
+        }
+    }
+}
+
 /// The input of one tick. A button is `true` while it is held.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
 pub struct Action {

@@ -1,3 +1,6 @@
+/// Downward acceleration in pixels per tick per tick.
+pub const GRAVITY: f32 = 0.25;
+
 /// A 2D vector in world pixels.
 ///
 /// Positive x points right. Positive y points up.
