@@ -3,8 +3,8 @@
 A 2D side-view boss fight rendered as ASCII art in the terminal. A reinforcement
 learning agent controls the boss and learns to fight its opponent.
 
-Nothing is implemented yet. This file lists the decisions made so far and the questions
-that are still open.
+Movement, the world and a first renderer exist. This file lists the decisions made so far
+and the questions that are still open.
 
 ## Goals
 
@@ -30,7 +30,9 @@ that are still open.
 | Training | PPO in Python. The Rust simulation is exposed to Python through PyO3 |
 | Trained policy in the game | Exported to ONNX and run from Rust |
 | Reward | Configurable, not fixed in code |
-| Frame size | 240 × 68 terminal cells. Each cell is a half-block character with a foreground and a background color, so a frame is 240 × 136 pixels |
+| Frame size | A fixed grid of 192 × 44 cells, centered in the terminal, so the art is made for one size. With kitty, `scripts/preview.sh` sets the font size so that the grid fills the screen |
+| Art | Hand-made ASCII art files in `crates/arena-render/art/`: a background, and the frames of each fighter. Fighters are drawn facing right and mirrored for facing left. A frame can also set cell background colors, for light such as a lantern's glow. A background can start as a picture converted to ASCII, then adjusted by hand |
+| Camera | Fixed. The arena is centered and does not scroll. The grid shows about 310 world pixels across, and the small fighter is 7 rows tall. The background is drawn for an arena 294 world pixels wide |
 | Output | The current terminal first. Frame composition is separate from output, so that other outputs can be added later |
 
 ## Architecture rules
@@ -68,11 +70,17 @@ from states in a recording, to train a bot that imitates the human (behavior clo
 and to keep the replay as one opponent in a pool. A boss must handle more than one play
 style, so evaluation needs a win rate per opponent.
 
-**Rendering.** The sprite format, the layer structure and the effects are not designed
-yet.
+**Art.** Each fighter has two hand-made idle frames. The arena is one hand-made background
+with two frames: a mossy hollow with a ruined arch. Attack animations, hit effects and the
+HUD are not made yet. Run the sample with `scripts/preview.sh` in kitty, or
+`cargo run -p arena-render --example preview`.
 
 **Own window.** A window that the game opens itself would give a fixed font and color
 scheme instead of the terminal's.
+
+## License
+
+MIT OR Apache-2.0, at your option. [LICENSE](LICENSE) holds both texts. [SOURCES.md](SOURCES.md) lists every outside source.
 
 ## AI agents
 

@@ -19,8 +19,6 @@ hand, so the agent's main roles are pair programmer, tutor and reviewer.
 - The simulation: world, physics, moves, effects, events and rewards.
 - Fighters, their moves and mechanics, and scripted bots.
 - Controllers, observations and action spaces.
-- The renderer's architecture: sprite format, layers, frame composition and the effect
-  system.
 - The RL core: the PPO loss, advantage estimation and the reward design.
 
 Do not write or edit this code. Point out the fix instead. Write code here only when the
@@ -28,8 +26,13 @@ user asks for one specific edit.
 
 ### Written by the agent
 
-- **Art:** sprite frames, backgrounds and color palettes, in the format that the
-  renderer's architecture defines.
+- **Renderer:** all of `arena-render`: art files, camera, frame composition, effects and
+  terminal output. The renderer only reads the simulation.
+- **Art:** sprites, backgrounds and color palettes, as ASCII art files in
+  `crates/arena-render/art/`. Hand-craft every frame, glyph by glyph. A background can
+  also start as a picture converted to ASCII outside the repository, for example with a
+  converter in the scratchpad, then adjusted by hand. Do not generate art from code. Match the user's references in [SOURCES.md](SOURCES.md). Show
+  one small sample before a full scene.
 - **Glue:** CI, `Cargo.toml` content, build scripts, ratatui layout boilerplate, terminal
   output plumbing, PyO3 wrapper plumbing, and training script plumbing (CLI, logging,
   checkpoints, plots, ONNX export).
@@ -62,6 +65,19 @@ Say which files you changed. If a file's group is not clear, ask.
 - A new move uses the common move structure. Flag one-off special cases.
 - Observations are relative to the observing fighter.
 - A trait is generalized only when two fighters need it.
+
+## Sources and licenses
+
+- List every outside source in [SOURCES.md](SOURCES.md): papers, repositories, posts and
+  art references. Use the form "Study used for <purpose>: <link>". Add a source when you
+  use it, not later.
+- Mark code that follows a source closely with a comment above the item:
+  - `// Source: <link> (<license>)` for code that is copied or adapted.
+  - `// Based on: <link>` for code written from scratch after study of the source.
+- Check the license before you use code from a source. The project license is MIT OR
+  Apache-2.0. Copy only code under a compatible license: MIT, Apache-2.0, BSD, ISC, zlib
+  or similar. From a source with no license, use ideas only and write the code from
+  scratch.
 
 ## Writing
 
