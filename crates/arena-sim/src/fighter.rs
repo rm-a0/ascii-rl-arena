@@ -30,6 +30,7 @@ pub struct Stats {
 #[derive(Clone, Debug, PartialEq)]
 pub struct Fighter {
     pub stats: Stats,
+    pub health: u32,
     pub position: Vec2,
     pub velocity: Vec2,
     pub facing: Facing,
@@ -44,9 +45,10 @@ pub struct Fighter {
 
 impl Fighter {
     #[must_use]
-    pub fn new(stats: Stats, position: Vec2, facing: Facing, on_ground: bool) -> Self {
+    pub fn new(stats: Stats, health: u32, position: Vec2, facing: Facing, on_ground: bool) -> Self {
         Self {
             stats,
+            health,
             position,
             velocity: Vec2::default(),
             facing,
