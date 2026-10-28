@@ -1,7 +1,4 @@
-use crate::{
-    action::Action,
-    fighter::{self, Fighter},
-};
+use crate::{action::Action, fighter::Fighter};
 
 /// The edges of the fight area in world pixels.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -34,8 +31,8 @@ impl World {
     /// Advance the fight by one tick. `actions[i]` controls `fighters[i]`.
     pub fn step(&mut self, actions: [Action; 2]) {
         self.tick += 1;
-        for (fighter, action) in self.fighters.iter_mut().zip(actions.iter()) {
-            fighter.update(*action, self.arena);
+        for (fighter, action) in self.fighters.iter_mut().zip(actions) {
+            fighter.update(action, self.arena);
         }
     }
 }
