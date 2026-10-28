@@ -1,8 +1,17 @@
+pub mod moth;
+pub mod moves;
+pub mod wanderer;
+
 use crate::{
     action::{Action, Facing},
     physics::{GRAVITY, Vec2},
     world::Arena,
 };
+
+pub enum Kind {
+    Moth,
+    Wanderer,
+}
 
 /// Numbers that do not change during a fight.
 ///
