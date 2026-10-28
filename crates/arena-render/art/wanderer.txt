@@ -1,0 +1,46 @@
+# The wanderer, idle, facing right. The renderer mirrors it for facing left.
+# Format: see src/art.rs.
+period 0.55
+anchor 5
+palette
+o 050807 hole
+b e6e1d2 bone
+m f2efe6 mask
+c 4a5a86 cloak
+l 7084b8 cloak light
+d 2e3858 cloak dark
+s d0923e scarf
+t c8d0da steel
+frame
+  \v    v/
+   \d88b/
+   888 88
+  ~`Y8 P'
+~=.d###b.\
+  d######b\
+   'v"v"'  `
+--
+  bb    bb
+   bmmmmb
+   mmmomm
+  smmmomm
+ssdcccccdt
+  dcccccclt
+   dddddd  t
+frame
+  \v    v/
+   \d88b/
+   888 88
+   `Y8 P'
+=~.d###b.\
+ ~d######b\
+   "v'v'"  `
+--
+  bb    bb
+   bmmmmb
+   mmmomm
+   mmmomm
+ssdcccccdt
+ sdcccccclt
+   dddddd  t
+

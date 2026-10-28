@@ -1,0 +1,310 @@
+# Arena: a mossy hollow under a dark canopy, with a ruined arch. Hand-made.
+# Drawn for an arena 294 world px wide: the floor spans columns 5 to 186, its surface is row 39.
+# Format: see src/art.rs. The grid is 192 x 44.
+period 0.8
+palette
+R 0b130f canopy rock
+r 15241b canopy edge
+q 1f3a2a roots
+v 2a5a3c vine
+V 438a56 leaf
+L f4ffc8 lantern core
+l b8e080 lantern glow
+h 6a9a52 lantern halo
+s 1c4034 far plant
+S 2a5a48 near plant
+p 8ab878 seed pod
+a 33453b arch stone
+A 4b6053 arch block
+z 1e2c25 soft edge
+k 0e1914 distant ruin
+w 222e27 wall rock
+W 384a3e wall edge
+m 357048 moss
+g 3a8650 grass
+G 64bc74 grass bright
+e 26301f earth
+E 182016 earth dark
+o 434a40 pebble
+u 8fe0c4 mushroom glow
+U b8c4ac mushroom stem
+f d8ffb0 firefly
+F 7fb888 firefly dim
+x 3a6250 light shaft
+t 24493c mist far
+T 3a6e58 mist near
+1 070c08 glow 1
+2 0a110a glow 2
+3 0e170d glow 3
+4 060e0c mushroom light 1
+5 091411 mushroom light 2
+frame
+%#&%)%#&%@#%%#&@%#%&#%@%#%&#@%#%#&%%#@%&#%#%&@#%##%@%&#%#%@#%&%#%@#%#&%#%@%#&%#@%#%&#%@#%#&%#@#%#&%#%@%#&#%@%#%&#%#@%#%&%#@%#&%#%@#%&#%#%%#@%&#%#%@#%&%#@%#%&#%#@%&#%#%@#%&#%#@%&#%#%%#&%@#(%#8@
+#%8#(#%@%#)  (#%&%#%#@%)    (%#&%#%@#)  (%#&%#%@ %&#%#%@)   (%#%&#%)  (#%@#%#%&)   (%#%@#%&# #%&%(   )%#%@#&%#%#)  (%#&%#%@)  (%#%&#%#@%##%#%&)   (%#@%#%&%)  (%#%#@%&#)   (%#&%#%@%##%@%#))#%&%
+&%#%)"#(  `   '%#%(  )%'     `%#(  `%#'    `%#(% #%)  `%#'   `%(  `%'  `%#%)  `%#'  '%#)  `% %#'  '   `%#%(  `%#'   `%)  '%#'   `%#%)  `%%)  `%#'  '%#%(  `%'   `%#%)  `%#'  '%#(  ` %#(  "(#%#%
+#8%#| |'   |   `|'   '| (      '|   '||     '|    '(   '|     ')   '    '|(    '|    '|    ') |        '|'    '|     '    '|     '|'    | '(   '| |  ')   ||    |'|(    '|    '(    ' |'   |%8#`
+%#&%)''    |,   '     '  )      '    '|      |>    '    '      '         '      '     '     ' '         '      '          '       '     '  '    ' |'  '   |'    |>'      '     ')     '  .'(#%#
+#%#%( :    :            (,            |      :                  '  . `                                                                            :       |     :              (,        : )%#&
+@%#&)".    '|            )            |      <|                 .  '  .     .  '  `,'"  , '. ",  '. ,"  '  `  .  '  `  .                          ,|      |     <|              )        ."(#%#
+%#8%| :     |           '(            |       |                  .  `.. ' `     _.----------------------------._   ' `  .                          |      |      |             '(        : |%&%
+#&%#) .     :'           )            |       :>                .' '. .' _.--''#=##=##=##=##=##==##=##=##=##=##=#``--._   `  .                     '      |      :>             )        . (%8#
+%#%@(,:    ,|           (          .  |  .  ' |             .  '   `_.-''#=##=##=_.--'''''''''''```````````--._=##=#  ', " _  `  .                        |      |             (         :,)#%&
+#%&#) .     |            )'          .-.     <|          .  '  _.-''#=##=##_.--''   ,           |          '   ``--._#;  '   `-._`  .                     |     <|              )'       . (#%8
+#%&8( :     '           (          '(@@@)'    :        .'   .-'##=##=_'--''         '        .  |  .       |         `'--     =##`-. `.                .  |  .   :             (         : )%8#
+%#%#) .                  )    *      `-'      |      .'   .'#=##=_.-' ,'  .         ;          .-.         '             * `-._=##=#`. `.                .-.     |         .    )        .'(#%#
+@%#%)':                 ,(         .  '  .    |>    :   .'#=#=.-'     |  ` ..                '(@@@)'                           `-.=#=#`. :             '(@@@)'   |>            ,(        : |%&%
+#%&%| .                  )                   <|    :   /#=#.-'       '' .  '                   `-'                                `-.#=#\ :              `-'    <|              )   '    ."(%#@
+%8#%( :                  '                    :   :   /=#.'            ` .  .                .  '  .                                 `.#=\ .           .  '  .   :              '        : )#%8
+#%#&)".                                       |   . /#=|               .   ' .      '                                                   |=#\                     |                       . |%#%
+%#%#| :    (")                  (")     *     ;   : |=#| '               '  . `                                      .                , |#=|                 (") ;                 (")   :'(&%#
+&%8#( .     |            .       |            '   . |##| |              .  '  .                                                       | |##|                  |  '                  |    . )%#%
+#%#%)':     :                    :                : |[]| ,                .  ` .            *                                         ; |[]|                  :      .              :    :"|#8%
+%#&%| .    \|                   \|                . |=#| |                '  .  '                                                     ' |#=|          .      \|                    \|    . (%#&
+#%#8( :     |                    |                : |##| '                  ` *  .                                                      |##|                  |                     |    : )%#%
+%#&%) .     !/                   !/               . |#=|        .          .   ' .                                                      |=#|                  !/                    !/   . (%#8
+#%8#( :     |                    |                : |[]|                     '  . `                                                 '   |[]|                  |                     |    : )#%&
+&%#%)".     :          _..       :      .._       . |##|                     .  '  .                            '                       |##|         _..      :      .._            :    ."(#%#
+#8%#| :    \|        ,'   `.    \|    .'   `,     : |=#|                      .  ` .            .                                       |#=|       ,'   `.   \|    .'   `,         \|    : |%8#
+%#&%)'.     |       /  ,-.  \    |   /. .-,  \    . |##|                      '  .  '                                                   |##|   .  /  ,-.  \   |   /  .-,  \         |    .'(#%#
+#%#%( :     |      /  /   `      |     '   \  \   : |[]|                        ` .  .'                                                 |[]|     /  /   `     |     '   \  \        |    : )%#&
+@%#&)".     :/    |  /  .-.   .  :/    .-.  \  |  . |#=|                      _ .   ' .                            _                    |=#|    |  /  .-.     :/    .-.  \  |       :/   ."(#%#
+%#8%| :     |     : |  /   `     |    '   \  | :  : |##|             ___     | | '  . `___        __              | |      ___          |##|    : |  /   `    |    '   \  | :       |    : |%&%
+#&%#) .     !     ' : /          !         \ : |  . |=#|            |   |    | |_.  ' |.  |      |  |    ___      | |     |   |         |#=|    | : /         !         \ : |       !    . (%8#
+%#%@(,:    \|     |  /          \|          \  |  : |##|            | n |   _|   | .  | n |   ___|  |   |   |    _|  \    | n |         |##|    |  /         \|          \  |      \|    :,)#%&
+#%&#) .     |     ! /            |           \ !  . |[]|         ___|   |__|     |____| ' |__|      |___| n |___|     |___|   |___      |['|    ! /           |           \ !       |    . (#%8
+#%&8( :     :     |/             :            \|  : |#=|    .                       ` .  .                                              |=#|    |/            :            \|       :    : )%8#
+%#%#) \ .|  /     .        .     |  .        . |  . |##.        .        .        .         .        .        .        .         .      |#.|    |  .        . |       .     |  .   \| | ./'(#%#
+@%#%)\:\ | /|/-   : .     .-.   .|   -   .     :. :-|=#| .      .         .  -     .      .    .    -   .      .  -     .      .        |.=|-   : .      .    .-.  -   .    : .  -\ \ |./:/|%&%
+#%&%| \.\|/ /~  ,\|/,  - (___) .-..   ~ -   .  -  ~ |.#|-  .  -  ~  .  -   - .  ~  -  .   ~ -   .  -  ~  .  -  .  -  ~  .  -   - .  ~  -|#.|  ~ -   .  -  ~  (___) .-.-  ,\|/, -   \!\|/~/"(%#@
+%8#%( :\\|//| ~\-\|/ / ~ - |~ (___) .  ~ -  ~  !~ ~_-[]~_- ~  . ~ -  ~   - ~ .  ~ -  ~   ~ ~ -  ~ - ~  . ~ -  ~   - ~ .  ~ -  ~   ~ ~ -_|~]-_~  . ~ -  ~   - ~||  (___)~\ \|/~/-  ~ \\|//. )#%8
+#%#&)-~~\|/-~ \|'\|/' \/ ~~|~ ~ |~~-~'|-~ -~()~|\|/~~-_~-~o-~ ~~-~ ~ -~~-~~ ~ -~ ~~- ~-~ \| ~~-~ ~ -~~-~|/-~ -~~ ~ -~ ~~- ~-~ -~ ~~-~ ~_-~~-\|/~|-'|~~- \/~ -~o|~-~ | \|/'\|/'~ -|' ~\|/ ~~|%#%
+%#%#|,;'",.'',;"',.,'";,.',',;"',.'",;.,'';",.,';'",..,';",'.,;,'.",',.;'",,'.;",',.'",;.',;'",.'',;"',.,'";,.',',;"',.'",;.,'';",.,';'",..,';",'.,;,'.",',.;'",,'.;",',.'",;.',;'",.'',;"'(&%#
+:;:.:;.::;.:.;:::.;.:;.:.;::.:;:.:;:.:;.::;.:.;:::.;.:;.:.;::.:;:.:;:.:;.::;.:.;:::.;.:;.:.;::.:;:.:;:.:;.::;.:.;:::.;.:;.:.;::.:;:.:;:.:;.::;.:.;:::.;.:;.:.;::.:;:.:;:.:;.::;.:.;:::.;.:;.:.;:
+o%.:)'..:. . o:.. .:. .:...:. .:.o .:  ..:. . o:.. .:. .:...:. .:.o .:  ..:. . o:.. .:. .:...:. .:.o .:  ..:. . o:.. .:. .:...:. .:.o .:  ..:. . o:.. .:. .:...:. .:.o .:  ..:. . o:.. .:.".:...
+%#.%|.  .   .  .  ..  . .   .  O   .  .  .   .  .  ..  . .   .  O   .  .  .   .  .  ..  . .   .  O   .  .  .   .  .  ..  . .   .  O   .  .  .   .  .  ..  . .   .  O   .  .  .   .  .  ..  .%.&
+~%#.(  .   . .    .  ~   .    .  ~  .   .   . .    .  ~   .    .  ~  .   .   . .    .  ~   .    .  ~  .   .   . .    .  ~   .    .  ~  .   .   . .    .  ~   .    .  ~  .   .   . .    .  ~)%#.
+--
+wwwwWRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRWwwwR
+wwwwWRRRRRR  RRRRRRRRRRR    RRRRRRRRRR  RRRRRRRR RRRRRRRR   RRRRRRRR  RRRRRRRRRR   RRRRRRRRR RRRRR   RRRRRRRRRRRR  RRRRRRRRR  RRRRRRRRRRRRRRRRR   RRRRRRRRRR  RRRRRRRRRR   RRRRRRRRRRRRRRRRWwwwR
+wwwwWmrr  r   rrrrr  rrr     rrrr  rrrr    rrrrr rrr  rrrr   rrr  rrr  rrrrr  rrrr  rrrr  rr rrr  r   rrrrr  rrrr   rrr  rrrr   rrrrr  rrrr  rrrr  rrrrr  rrr   rrrrr  rrrr  rrrr  r rrr  mWwwwr
+wwwwW qq   v   qqq   qq v      qq   qqv     qv    qq   qq     qq   q    qqq    qq    qq    qq q        qqq    qq     q    qq     qqq    q qq   qq v  qq   vq    vqqq    qq    qv    q qq   Wwwwq
+wwwwWmq    vV   q     q  v      q    qv      vV    q    q      q         q      q     q     q q         q      q          q       q     q  q    q vV  q   vq    vVq      q     qv     q  zmWwww
+wwwwW z    v            vV            v      v                  x  x x                                                                            v       v     v              vV        z Wwww
+wwwwWmz    Vv            v            v      Vv                 x  x  x     z  z  zmmm  m mz mm  mz mm  m  z  z  z  z  z                          Vv      v     Vv              v        zmWwww
+wwwwW z     v           Vv            v       v                  x  xzx z z     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa   z z  z                          v      v      v             Vv        z Wwww
+wwwwW z     vV           v            v       vV                zx zx Fx aaaaaaaAaaAaaAaaAaaAaaAAaaAaaAaaAaaAaaAaaaaaaa   z  z                     V      v      vV             v        z Wwww
+wwwwWmz    Vv           v          h  v  h  F v             z  z   xaaaaaaAaaAaaAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAaaAa  mm m a  z  z                        v      v             v         zmWwww
+wwwwW z     v            vV          lll     Vv          z  z  aaaaaaAaaAaaaaaaaa   m           v          m   aaaaaaam  m   aaaaz  z                     v     Vv              vV       z Wwww
+wwwwW z     V           v          hlLLLlh    v        zz   aaaaaAaaAamaaaa         m        h  v  h       m         amaa     Aaaaaa zz                h  v  h   v             v         z Wwww
+wwwwW z                  v    f      lll      v      zz   aaaAaaAaaaa mx  x         m          lll         m             f aaaaAaaAaaa zz                lll     v         F    v        zmWwww
+wwwwWmz                 Vv         h  h  h    vV    z   aaaAaAaaa     m  x xF                hlLLLlh                           aaaAaAaaa z             hlLLLlh   vV            Vv        z Wwww
+wwwwW z                  v                   Vv    z   aaAaaaa       xm x  x                   lll                                aaaaAaa z              lll    Vv              v   F    zmWwww
+wwwwW z                  V                    v   z   aAaaa            x x  x                h  h  h                                 aaaAa F           h  h  h   v              V        z Wwww
+wwwwWmz                                       v   z aaAa               x   x x      F                                                   aAaa                     v                       z Wwww
+wwwwW z    ppp                  ppp     f     v   z aAaa m               x  x x                                      F                m aaAa                 ppp v                 ppp   zmWwww
+wwwwW z     s            F       S            V   z aaaa m              x  x  x                                                       m aaaa                  S  V                  s    z Wwww
+wwwwWmz     s                    S                z aAAa m                x  x x            f                                         m aAAa                  S      F              s    zmWwww
+wwwwW z    ss                   SS                z aAaa m                x  x  x                                                     m aaAa          F      SS                    ss    z Wwww
+wwwwW z     s                    S                z aaaa m                  x f  x                                                      aaaa                  S                     s    z Wwww
+wwwwW z     ss                   SS               z aaAa        F          x   x x                                                      aAaa                  SS                    ss   z Wwww
+wwwwW z     s                    S                z aAAa                     x  x x                                                 F   aAAa                  S                     s    z Wwww
+wwwwWmz     s          SSS       S      sss       z aaaa                     x  x  x                            F                       aaaa         sss      S      SSS            s    zmWwww
+wwwwW z    ss        SS   SS    SS    ss   ss     z aAaa                      x  x x            F                                       aaAa       ss   ss   SS    SS   SS         ss    z Wwww
+wwwwWmz     s       S  SSS  S    S   sF sss  s    z aaaa                      x  x  x                                                   aaaa   F  s  sss  s   S   S  SSS  S         s    zmWwww
+wwwwW z     s      S  S   S      S     s   s  s   z aAAa                        x x  xF                                                 aAAa     s  s   s     S     S   S  S        s    z Wwww
+wwwwWmz     ss    S  S  SSS   F  SS    sss  s  s  z aaAa                      k x   x x                            k                    aAaa    s  s  sss     SS    SSS  S  S       ss   zmWwww
+wwwwW z     s     S S  S   S     S    s   s  s s  z aaaa             kkk     k k x  x xkkk        kk              k k      kkk          aaaa    s s  s   s    S    S   S  S S       s    z Wwww
+wwwwW z     s     F S S          S         s s s  z aAaa            k   k    k kkx  x kx  k      k  k    kkk      k k     k   k         aaAa    s s s         S         S S S       s    z Wwww
+wwwwWmz    ss     S  S          SS          s  s  z aaaa            k k k   kk   k x  k k k   kkkk  k   k   k    kk  k    k k k         aaaa    s  s         SS          S  S      ss    zmWwww
+wwwwW z     s     S S            S           s s  z aAAa         kkkk   kkkk     kkkkkk x kkkk      kkkkk k kkkkk     kkkkk   kkkk      aAFa    s s           S           S S       s    z Wwww
+wwwwW z     s     SS             S            ss  z aaAa    F                       x x  x                                              aAaa    ss            S            SS       s    z Wwww
+wwwwW S tS  S     t        t     S  t        t s  z aaat        t        t        t         t        t        t        t         t      aata    s  t        t S       t     S  t   Ss S tSmWwww
+wwwwWSzS S SsSt   S t     uuu   tS   t   t     st ztaAaa t      t         t  t     t      t    t    t   t      t  t     t      t        atAat   s t      t    uuu  t   t    S t  tS S StSzSWwww
+wwwwW StSSS St  ggggg  t uuuuu uuut   t t   t  t  t ataat  t  t  t  t  t   t t  t  t  t   t t   t  t  t  t  t  t  t  t  t  t   t t  t  taata  t t   t  t  t  uuuuu uuut  ggggg t   SsSSStSmWwww
+wwwwW zSSSSSs TgTggg g T T UT uuuuu T  T T  T  sT TaTAATaT T  T T T  T   T T T  T T  T   T T T  T T T  T T T  T   T T T  T T  T   T T TaaTATaT  T T T  T   T TSU  uuuuuTg gggTgT  T SSSSST Wwww
+wwwwWTTTSSSTT ggggggg gg TTUT T UTTTTggTT TTooTsgggTTTaTTToTT TTTT T TTTTTT T TT TTT TTT gg TTTT T TTTTTggTT TTT T TT TTT TTT TT TTTT TaTTTTgggTsTggTTT ggT TToUTTT U ggggggggT Tgg TSSS TTWwww
+wwwwWggGGggGGggGGgggGGgggGgGggGGggGGggggGGgGgggGgGGggggGgGgGggggGgGgGgggGGggGggGgGggGGgggGggGGggGGggGGgggGGgggGgGggGGggGGggggGGgGgggGgGGggggGgGgGggggGgGgGgggGGggGggGgGggGGgggGggGGggGGggGGWwww
+eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+oweeWmeeee e oeee eee eeeeeee eeeo ee  eeee e oeee eee eeeeeee eeeo ee  eeee e oeee eee eeeeeee eeeo ee  eeee e oeee eee eeeeeee eeeo ee  eeee e oeee eee eeeeeee eeeo ee  eeee e oeee eeemeeeee
+wwEwWE  E   E  E  EE  E E   E  o   E  E  E   E  E  EE  E E   E  o   E  E  E   E  E  EE  E E   E  o   E  E  E   E  E  EE  E E   E  o   E  E  E   E  E  EE  E E   E  o   E  E  E   E  E  EE  EwEw
+qwwEW  E   E E    E  q   E    E  q  E   E   E E    E  q   E    E  q  E   E   E E    E  q   E    E  q  E   E   E E    E  q   E    E  q  E   E   E E    E  q   E    E  q  E   E   E E    E  qWwwE
+--
+
+
+
+
+
+
+                                  111111111
+                              11112222222221111
+                            111222233333332222111                                           111111111                                                 111111111
+                           11222333333333333322211                                      11112222222221111                                         11112222222221111
+                          1122233333333333333322211                                   111222233333332222111                                     111222233333332222111
+                          1122233333333333333322211                                  11222333333333333322211                                   11222333333333333322211
+                          1122233333333333333322211                                 1122233333333333333322211                                 1122233333333333333322211
+                           11222333333333333322211                                  1122233333333333333322211                                 1122233333333333333322211
+                            111222233333332222111                                   1122233333333333333322211                                 1122233333333333333322211
+                              11112222222221111                                      11222333333333333322211                                   11222333333333333322211
+                                  111111111                                           111222233333332222111                                     111222233333332222111
+                                                                                        11112222222221111                                         11112222222221111
+                                                                                            111111111                                                 111111111
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        4444444444444                                                                                                                       4444444444444
+                       444555555555444                                                    111111111111111                                                  444555555555444
+                      4445555555555544                                               111111222222222222211111                                             4445555555555544
+                       444555555555444                                            11111222222222222222222221111                                            444555555555444
+                        4444444444444                                             11111222222222222222222221111                                             4444444444444
+                                                                                     111111222222222222211111
+
+
+
+
+frame
+%#&%)%#&%@#%%#&@%#%&#%@%#%&#@%#%#&%%#@%&#%#%&@#%##%@%&#%#%@#%&%#%@#%#&%#%@%#&%#@%#%&#%@#%#&%#@#%#&%#%@%#&#%@%#%&#%#@%#%&%#@%#&%#%@#%&#%#%%#@%&#%#%@#%&%#@%#%&#%#@%&#%#%@#%&#%#@%&#%#%%#&%@#(%#8@
+#%8#(#%@%#)  (#%&%#%#@%)    (%#&%#%@#)  (%#&%#%@ %&#%#%@)   (%#%&#%)  (#%@#%#%&)   (%#%@#%&# #%&%(   )%#%@#&%#%#)  (%#&%#%@)  (%#%&#%#@%##%#%&)   (%#@%#%&%)  (%#%#@%&#)   (%#&%#%@%##%@%#))#%&%
+&%#%)"#(  `   '%#%(  )%'     `%#(  `%#'    `%#(% #%)  `%#'   `%(  `%'  `%#%)  `%#'  '%#)  `% %#'  '   `%#%(  `%#'   `%)  '%#'   `%#%)  `%%)  `%#'  '%#%(  `%'   `%#%)  `%#'  '%#(  ` %#(  "(#%#%
+#8%#| |'   |   `|'   '| (      '|   '||     '|    '(   '|     ')   '    '|(    '|    '|    ') |        '|'    '|     '    '|     '|'    | '(   '| |  ')   ||    |'|(    '|    '(    ' |'   |%8#`
+%#&%)''    |,   '     '  )      '    '|      |>    '    '      '         '      '     '     ' '         '      '          '       '     '  '    ' |'  '   |'    |>'      '     ')     '  .'(#%#
+#%#%( :    :            (,            |      :                  '  . `                                                                            :       |     :              (,        : )%#&
+@%#&)".    '|            )            |      <|                 .  '  .     .  '  `,'"  , '. ",  '. ,"  '  `  .  '  `  .                          ,|      |     <|              )        ."(#%#
+%#8%| :     |       '   '(            |       |                  .  `.. ' `     _.----------------------------._   ' `  .                          |      |      |             '(        : |%&%
+#&%#) .     :'           )            |       :>                .' '.  ' _.--''#=##=##=##=##=##==##=##=##=##=##=#``--._   `  .                     '      |      :>             )        . (%8#
+%#%@(,:    ,|           (          '  |  '  . |             .  '   `_.-''#=##=##=_.--'''''''''''```````````--._=##=#  ', " _  `  .                        |     .|             (         :,)#%&
+#%&#) .     |            )'          .-.     <|          .  '  _.-''#=##=##_.--''   ,           |          '   `'--._#;  '   `-._`  .                     |     <|              )'       . (#%8
+#%&8( :     '           (          .(@@@).    :        .'   .-'##=##=_'--''         '        '  |  '       |         `'--     =##`-..`.                '  |  '   :             (         : )%8#
+%#%#) .                  )           `-'      |      .'   .'#=##=_.-' ,'  .         ;          .-.         '             + `-._=##=#`. `.                .-.     |         '    )        .'(#%#
+@%#%)':                 ,(         '  .  '    |>    :   .'#=#=.-'     |  ` .'                .(@@@).                           `-.=#=#`. :             .(@@@).   |>            ,(        : |%&%
+#%&%| .                  )                   <|    :   /#'#.-'       '' .  '                   `-'                                `-.#=#\ :              `-'    <|              )        ."(%#@
+%8#%( :                  '                    :   :   /=#.'            ` .  .                '  .  '        '                        `.#=\ :           '  .  '   :              '        : )#%8
+#%#&)".                                       |   . /#=|               .   ' .                                                          |=#\                     |                       . |%#%
+%#%#| :    (")                  (")     +     ;   : |=#| '               '  . `                                      '                , |#=|                 (") ;                 (")   :'(&%#
+&%8#( .     |                    |            '   . |##| |              .  '  .                                                       | |##|                  |  '                  |    . )%#%
+#%#%)':     :                    :                : |[]| ,                .  ` .                                                      ; |[]|                  :                     :    :"|#8%
+%#&%| .    \|                   \|             .  . |=#| |                '  .  '                                                     ' |#=|                 \|                    \|    . (%#&
+#%#8( :     |                    |                : |##| '                  ` +  .                     '                                |##|                  |                     |    : )%#%
+%#&%) .     !/ '                 !/               . |#=|        '          .   ' .                                                      |=#|                  !/                    !/   . (%#8
+#%8#( :     |                    |                : |[]|                     '  . `                                                 .   |[]|                  |                     |    : )#%&
+&%#%)".     :          _..       :      .._       . |##|                     .  '  .                            .                       |##|         _..      :      .._       +    :    ."(#%#
+#8%#| :    \|        ,'   `.    \|    .'   `,     : |=#|                      .  ` .                                                    |#=|       ,'   `.   \|    .'   `,         \|    : |%8#
+%#&%)'.     |       /  ,-.  \    |   /' .-,  \    . |##|                      '  .  '                                                   |##|   '  /  ,-.  \   |   /  .-,  \         |    .'(#%#
+#%#%( :     |      /  /   `      |     '   \  \   : |[]|                        ` .  .                                                  |[]|     /  /   `     |     '   \  \        |    : )%#&
+@%#&)".     :/    |  /  .-.      :/    .-.  \  |  . +#=|                      _ .   ' .                            _                    |=#|    |  /  .-.     :/    .-.  \  |       :/   ."(#%#
+%#8%| :     |     : |  /   `     |    '   \  | :  : |##|             ___     | | '  . `___        __      '       | |      ___          |##|    : |  /+  `    |    '   \  | :       |    : |%&%
+#&%#) .     !     | : /          !         \ : |  . |=#|            |   |    | |_.  ' |.  |      |  |    ___      | |     |   |         |#=|    | : /         !         \ : |       !    . (%8#
+%#%@(,:    \|     |  /          \|          \  |  : |##|            | n |   _|   | .  | n |   ___|  |   |   |    _|  \    | n |         |##|    |  /         \| '        \  |      \|    :,)#%&
+#%&#) .     |     ! /            |           \ !  . |[]|         ___|   |__|     |____| ' |__|      |___| n |___|     |___|   |___      |[.|    ! /           |           \ !       |    . (#%8
+#%&8( :     :     |/             :            \|  : |#=|    '                       ` .  .                                              |=#|    |/            :            \|       :    : )%8#
+%#%#) \. |  /    .|       .      | .        .  |  . |#.|       .        .       .         .        .        .        .         .        .##|    |.       .    |    .        .      \|.|  /'(#%#
+@%#%)\:\ |./|/    :.      .-.  . |  -   .      .  - |=#|.      .        .  -     .      .    .    -   .      .  -     .      .        . |-=|   .:     .    .  .-.   .      .: -   \ \ | /:/|%&%
+#%&%| \ \|/ /  .,\|/, - .(___)-.-.   ~ -   .  -| ~  .##- .  -  ~  .  -   - .  ~  -  .   ~ -   .  -  ~  .  - .  -  ~  .  -   - .  ~  -  .|##~ -  |.  -  ~  .  (___)-.-.  .,\|/, - . \~\|/ /.(%#@
+%8#%( ~\\|//|~ \ \|/./~ -  |  (___).  ~ -  ~  ~!~ -_|~]-_~  . ~ -  ~   - ~ .  ~ -  ~  ~ ~ -  ~ - ~  . ~ -  ~   - ~ .  ~ -  ~  ~ ~ -  ~ -|~]|. ~ -  ~   - ~ .  ~|- (___) \ \|/~/- ~  \\|//: )#%8
+#%#&)~~ \|/~|~\|'\|/'-\/~~-| ~ -|~-~ '|~ -~~() -\|/~-_~-~]o~ ~~-~ ~ -~~~~ ~ -~ ~~- ~-~ -~\|~-~ ~ -~~-~ ~|/ -~~ ~ -~ ~~- ~-~ -~ ~~-~]~ -~~~~_\|/~|~'| ~-~\/~ ~~o| ~ -|~\|/'\|/'~~ |'-~\|/- ~|%#%
+%#%#|,;'",.'',;"',.,'";,.',',;"',.'",;.,'';",.,';'",..,';",'.,;,'.",',.;'",,'.;",',.'",;.',;'",.'',;"',.,'";,.',',;"',.'",;.,'';",.,';'",..,';",'.,;,'.",',.;'",,'.;",',.'",;.',;'",.'',;"'(&%#
+:;:.:;.::;.:.;:::.;.:;.:.;::.:;:.:;:.:;.::;.:.;:::.;.:;.:.;::.:;:.:;:.:;.::;.:.;:::.;.:;.:.;::.:;:.:;:.:;.::;.:.;:::.;.:;.:.;::.:;:.:;:.:;.::;.:.;:::.;.:;.:.;::.:;:.:;:.:;.::;.:.;:::.;.:;.:.;:
+o%.:)'..:. . o:.. .:. .:...:. .:.o .:  ..:. . o:.. .:. .:...:. .:.o .:  ..:. . o:.. .:. .:...:. .:.o .:  ..:. . o:.. .:. .:...:. .:.o .:  ..:. . o:.. .:. .:...:. .:.o .:  ..:. . o:.. .:.".:...
+%#.%|.  .   .  .  ..  . .   .  O   .  .  .   .  .  ..  . .   .  O   .  .  .   .  .  ..  . .   .  O   .  .  .   .  .  ..  . .   .  O   .  .  .   .  .  ..  . .   .  O   .  .  .   .  .  ..  .%.&
+~%#.(  .   . .    .  ~   .    .  ~  .   .   . .    .  ~   .    .  ~  .   .   . .    .  ~   .    .  ~  .   .   . .    .  ~   .    .  ~  .   .   . .    .  ~   .    .  ~  .   .   . .    .  ~)%#.
+--
+wwwwWRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRWwwwR
+wwwwWRRRRRR  RRRRRRRRRRR    RRRRRRRRRR  RRRRRRRR RRRRRRRR   RRRRRRRR  RRRRRRRRRR   RRRRRRRRR RRRRR   RRRRRRRRRRRR  RRRRRRRRR  RRRRRRRRRRRRRRRRR   RRRRRRRRRR  RRRRRRRRRR   RRRRRRRRRRRRRRRRWwwwR
+wwwwWmrr  r   rrrrr  rrr     rrrr  rrrr    rrrrr rrr  rrrr   rrr  rrr  rrrrr  rrrr  rrrr  rr rrr  r   rrrrr  rrrr   rrr  rrrr   rrrrr  rrrr  rrrr  rrrrr  rrr   rrrrr  rrrr  rrrr  r rrr  mWwwwr
+wwwwW qq   v   qqq   qq v      qq   qqv     qv    qq   qq     qq   q    qqq    qq    qq    qq q        qqq    qq     q    qq     qqq    q qq   qq v  qq   vq    vqqq    qq    qv    q qq   Wwwwq
+wwwwWmq    vV   q     q  v      q    qv      vV    q    q      q         q      q     q     q q         q      q          q       q     q  q    q vV  q   vq    vVq      q     qv     q  zmWwww
+wwwwW z    v            vV            v      v                  x  x x                                                                            v       v     v              vV        z Wwww
+wwwwWmz    Vv            v            v      Vv                 x  x  x     z  z  zmmm  m mz mm  mz mm  m  z  z  z  z  z                          Vv      v     Vv              v        zmWwww
+wwwwW z     v       F   Vv            v       v                  x  xzx z z     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa   z z  z                          v      v      v             Vv        z Wwww
+wwwwW z     vV           v            v       vV                zx zx  x aaaaaaaAaaAaaAaaAaaAaaAAaaAaaAaaAaaAaaAaaaaaaa   z  z                     V      v      vV             v        z Wwww
+wwwwWmz    Vv           v          h  v  h  F v             z  z   xaaaaaaAaaAaaAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaAaaAa  mm m a  z  z                        v     Fv             v         zmWwww
+wwwwW z     v            vV          lll     Vv          z  z  aaaaaaAaaAaaaaaaaa   m           v          m   aFaaaaam  m   aaaaz  z                     v     Vv              vV       z Wwww
+wwwwW z     V           v          hlLLLlh    v        zz   aaaaaAaaAamaaaa         m        h  v  h       m         amaa     AaaaaaFzz                h  v  h   v             v         z Wwww
+wwwwW z                  v           lll      v      zz   aaaAaaAaaaa mx  x         m          lll         m             f aaaaAaaAaaa zz                lll     v         F    v        zmWwww
+wwwwWmz                 Vv         h  h  h    vV    z   aaaAaAaaa     m  x xF                hlLLLlh                           aaaAaAaaa z             hlLLLlh   vV            Vv        z Wwww
+wwwwW z                  v                   Vv    z   aaFaaaa       xm x  x                   lll                                aaaaAaa z              lll    Vv              v        zmWwww
+wwwwW z                  V                    v   z   aAaaa            x x  x                h  h  h        F                        aaaAa z           h  h  h   v              V        z Wwww
+wwwwWmz                                       v   z aaAa               x   x x                                                          aAaa                     v                       z Wwww
+wwwwW z    ppp                  ppp     f     v   z aAaa m               x  x x                                      F                m aaAa                 ppp v                 ppp   zmWwww
+wwwwW z     s                    S            V   z aaaa m              x  x  x                                                       m aaaa                  S  V                  s    z Wwww
+wwwwWmz     s                    S                z aAAa m                x  x x                                                      m aAAa                  S                     s    zmWwww
+wwwwW z    ss                   SS             F  z aAaa m                x  x  x                                                     m aaAa                 SS                    ss    z Wwww
+wwwwW z     s                    S                z aaaa m                  x f  x                     F                                aaaa                  S                     s    z Wwww
+wwwwW z     ss F                 SS               z aaAa        F          x   x x                                                      aAaa                  SS                    ss   z Wwww
+wwwwW z     s                    S                z aAAa                     x  x x                                                 F   aAAa                  S                     s    z Wwww
+wwwwWmz     s          SSS       S      sss       z aaaa                     x  x  x                            F                       aaaa         sss      S      SSS       f    s    zmWwww
+wwwwW z    ss        SS   SS    SS    ss   ss     z aAaa                      x  x x                                                    aaAa       ss   ss   SS    SS   SS         ss    z Wwww
+wwwwWmz     s       S  SSS  S    S   sF sss  s    z aaaa                      x  x  x                                                   aaaa   F  s  sss  s   S   S  SSS  S         s    zmWwww
+wwwwW z     s      S  S   S      S     s   s  s   z aAAa                        x x  x                                                  aAAa     s  s   s     S     S   S  S        s    z Wwww
+wwwwWmz     ss    S  S  SSS      SS    sss  s  s  z faAa                      k x   x x                            k                    aAaa    s  s  sss     SS    SSS  S  S       ss   zmWwww
+wwwwW z     s     S S  S   S     S    s   s  s s  z aaaa             kkk     k k x  x xkkk        kk      F       k k      kkk          aaaa    s s  sf  s    S    S   S  S S       s    z Wwww
+wwwwW z     s     S S S          S         s s s  z aAaa            k   k    k kkx  x kx  k      k  k    kkk      k k     k   k         aaAa    s s s         S         S S S       s    z Wwww
+wwwwWmz    ss     S  S          SS          s  s  z aaaa            k k k   kk   k x  k k k   kkkk  k   k   k    kk  k    k k k         aaaa    s  s         SS F        S  S      ss    zmWwww
+wwwwW z     s     S S            S           s s  z aAAa         kkkk   kkkk     kkkkkk x kkkk      kkkkk k kkkkk     kkkkk   kkkk      aAFa    s s           S           S S       s    z Wwww
+wwwwW z     s     SS             S            ss  z aaAa    F                       x x  x                                              aAaa    ss            S            SS       s    z Wwww
+wwwwW St S  S    tS       t      S t        t  s  z aata       t        t       t         t        t        t        t         t        taaa    st       t    S    t        t      SstS  SmWwww
+wwwwWSzS StSsS    St      uuu  t S  t   t      t  t aAaat      t        t  t     t      t    t    t   t      t  t     t      t        t atAa   ts     t    t  uuu   t      tS t   S S S SzSWwww
+wwwwW S SSS S  tggggg t tuuuuutuuu   t t   t  ts t  taat t  t  t  t  t   t t  t  t  t   t t   t  t  t  t  t t  t  t  t  t   t t  t  t  taaat t  st  t  t  t  uuuuutuuu  tggggg t t StSSS StWwww
+wwwwW TSSSSSsT g gggTgT T  U  uuuuuT  T T  T  TsT TaaTATaT  T T T  T   T T T  T T  T  T T T  T T T  T T T  T   T T T  T T  T  T T T  T TaTAaT T T  T   T T T  TUT uuuuu g gggTgT T  SSSSSz Wwww
+wwwwWTT SSSTsTgggggggTggTTTU T TUTTT ggT TTToo TgggTTaTTTAoT TTTT T TTTTT T TT TTT TTT TTggTTT T TTTTT Tgg TTT T TT TTT TTT TT TTTTaT TTTTTagggTsTgg TTTggT TToU T TUTggggggggTT ggTTSSST TWwww
+wwwwWggGGggGGggGGgggGGgggGgGggGGggGGggggGGgGgggGgGGggggGgGgGggggGgGgGgggGGggGggGgGggGGgggGggGGggGGggGGgggGGgggGgGggGGggGGggggGGgGgggGgGGggggGgGgGggggGgGgGgggGGggGggGgGggGGgggGggGGggGGggGGWwww
+eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
+oweeWmeeee e oeee eee eeeeeee eeeo ee  eeee e oeee eee eeeeeee eeeo ee  eeee e oeee eee eeeeeee eeeo ee  eeee e oeee eee eeeeeee eeeo ee  eeee e oeee eee eeeeeee eeeo ee  eeee e oeee eeemeeeee
+wwEwWE  E   E  E  EE  E E   E  o   E  E  E   E  E  EE  E E   E  o   E  E  E   E  E  EE  E E   E  o   E  E  E   E  E  EE  E E   E  o   E  E  E   E  E  EE  E E   E  o   E  E  E   E  E  EE  EwEw
+qwwEW  E   E E    E  q   E    E  q  E   E   E E    E  q   E    E  q  E   E   E E    E  q   E    E  q  E   E   E E    E  q   E    E  q  E   E   E E    E  q   E    E  q  E   E   E E    E  qWwwE
+--
+
+
+
+
+
+
+
+                              11111222222211111
+                            111222223333322222111
+                           11222233333333333222211                                      11111222222211111                                         11111222222211111
+                          1122223333333333333222211                                   111222223333322222111                                     111222223333322222111
+                          1122223333333333333222211                                  11222233333333333222211                                   11222233333333333222211
+                          1122223333333333333222211                                 1122223333333333333222211                                 1122223333333333333222211
+                           11222233333333333222211                                  1122223333333333333222211                                 1122223333333333333222211
+                            111222223333322222111                                   1122223333333333333222211                                 1122223333333333333222211
+                              11111222222211111                                      11222233333333333222211                                   11222233333333333222211
+                                                                                      111222223333322222111                                     111222223333322222111
+                                                                                        11111222222211111                                         11111222222211111
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                        4444444444444                                                                                                                       4444444444444
+                       444555555555444                                                    111111111111111                                                  444555555555444
+                      4445555555555544                                               111111222222222222211111                                             4445555555555544
+                       444555555555444                                            11111222222222222222222221111                                            444555555555444
+                        4444444444444                                             11111222222222222222222221111                                             4444444444444
+                                                                                     111111222222222222211111
+
+
+
+

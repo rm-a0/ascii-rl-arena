@@ -1,0 +1,62 @@
+# The moth duelist, idle, facing right. The renderer mirrors it for facing left.
+# Format: see src/art.rs.
+period 0.7
+anchor 9
+palette
+a e0d8c2 antenna
+m f2efe6 mask
+e ff5d6c ember
+r d8cdb4 ruff
+x c03048 wing
+w e0566a wing light
+y 72182c wing dark
+k 6a5064 body
+t c8d0da steel
+frame
+ ~-._
+     `-.\
+        .d8b.
+        88b\8
+        `Y8P'
+    .xx.oOOo.
+  .xXXX\|##|\
+ /XXXXXX|##| \
+ qXXXXX/ ||   \
+  qXXX/  ||    \
+   'v'   /\     \
+--
+ aaaa
+     aaaa
+        mmmmm
+        mmmem
+        mmmmm
+    wxxwrrrrr
+  wxxxxykkkkk
+ yxxxxxxkkkk t
+ yxxxxxy kk   t
+  yyyyy  kk    t
+   yyy   kk     t
+frame
+ _-~.
+     `-.\
+        .d8b.
+        88b\8
+        `Y8P'
+    .xx.oOOo.
+  .xXXX\|##|\
+ /XXXXXX|##| \
+ qXXXXX/ ||   \
+ qXXXX/  ||    \
+  'v'v   /\     \
+--
+ aaaa
+     aaaa
+        mmmmm
+        mmmem
+        mmmmm
+    wxxwrrrrr
+  wxxxxykkkkk
+ yxxxxxxkkkk t
+ yxxxxxy kk   t
+ yyyyyy  kk    t
+  yyyy   kk     t
