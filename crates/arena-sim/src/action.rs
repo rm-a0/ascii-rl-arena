@@ -17,9 +17,29 @@ impl Facing {
 }
 
 /// The input of one tick. A button is `true` while it is held.
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
+#[expect(
+    clippy::struct_excessive_bools,
+    reason = "independent buttons that combine"
+)]
 pub struct Action {
     pub jump: bool,
     pub dash: bool,
+    pub attack: bool,
+    pub guard: bool,
     pub direction: Option<Facing>,
+}
+
+impl Action {
+    #[must_use]
+    pub const fn pressed(self, last: Action) -> Action {
+        Action {
+            jump: self.jump && !last.jump,
+            dash: self.dash && !last.dash,
+            attack: self.attack && !last.attack,
+            guard: self.guard && !last.guard,
+            direction: self.direction,
+        }
+    }
 }

@@ -1,8 +1,22 @@
 use crate::{
-    fighter::{Fighter, moves::Move},
+    action::Action,
+    fighter::{Stats, moves::Move},
     physics::{Rect, Vec2},
 };
 
+pub const STATS: Stats = Stats {
+    max_health: 5,
+    run_speed: 1.5,
+    jump_speed: 4.0,
+    dash_speed: 4.0,
+    dash_duration: 8,
+    dash_cooldown: 30,
+};
+
+// Indices into `MOVES`.
+pub const STAB_ID: usize = 0;
+pub const LUNGE_ID: usize = 1;
+pub const GUARD_ID: usize = 2;
 pub const RIPOSTE_ID: usize = 3;
 
 pub const STAB: Move = Move {
@@ -46,13 +60,21 @@ pub const RIPOSTE: Move = Move {
 
 pub const MOVES: [Move; 4] = {
     let mut m = [Move::BASE; 4];
-    m[0] = STAB;
-    m[1] = LUNGE;
-    m[2] = GUARD;
+    m[STAB_ID] = STAB;
+    m[LUNGE_ID] = LUNGE;
+    m[GUARD_ID] = GUARD;
     m[RIPOSTE_ID] = RIPOSTE;
     m
 };
 
-pub struct Moth {
-    pub fighter: Fighter,
+/// Return the id of the move that this input starts. Guard wins over attack.
+#[must_use]
+pub fn pick(pressed: Action, _held: Action, _on_ground: bool) -> Option<usize> {
+    if pressed.guard {
+        Some(GUARD_ID)
+    } else if pressed.attack {
+        Some(STAB_ID)
+    } else {
+        None
+    }
 }

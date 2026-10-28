@@ -1,5 +1,12 @@
 use crate::physics::{Rect, Vec2};
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Phase {
+    Startup,
+    Active,
+    Recovery,
+}
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Move {
     pub startup: u32,
@@ -27,4 +34,18 @@ impl Move {
         guard: false,
         on_block: None,
     };
+
+    /// Return the phase at `tick`, counted from 0. Return `None` after the last tick.
+    #[must_use]
+    pub const fn phase(&self, tick: u32) -> Option<Phase> {
+        if tick < self.startup {
+            Some(Phase::Startup)
+        } else if tick < self.startup + self.active {
+            Some(Phase::Active)
+        } else if tick < self.startup + self.active + self.recovery {
+            Some(Phase::Recovery)
+        } else {
+            None
+        }
+    }
 }
