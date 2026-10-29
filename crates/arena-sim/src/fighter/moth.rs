@@ -4,6 +4,8 @@ use crate::{
     physics::{Rect, Vec2},
 };
 
+const BODY: Rect = Rect::new(Vec2::new(-4.0, 0.0), Vec2::new(5.0, 34.0));
+
 pub const STATS: Stats = Stats {
     max_health: 5,
     run_speed: 1.5,
@@ -11,6 +13,7 @@ pub const STATS: Stats = Stats {
     dash_speed: 4.0,
     dash_duration: 8,
     dash_cooldown: 30,
+    body: BODY,
 };
 
 // Indices into `MOVES`.
@@ -24,7 +27,7 @@ pub const STAB: Move = Move {
     active: 4,
     recovery: 12,
     damage: 1,
-    hitbox: Some(Rect::new(Vec2::new(6.0, 2.0), Vec2::new(22.0, 10.0))),
+    hitbox: Some(Rect::new(Vec2::new(6.0, 12.0), Vec2::new(28.0, 18.0))),
     ..Move::BASE
 };
 
@@ -33,7 +36,7 @@ pub const LUNGE: Move = Move {
     active: 10,
     recovery: 22,
     damage: 2,
-    hitbox: Some(Rect::new(Vec2::new(6.0, 2.0), Vec2::new(22.0, 10.0))),
+    hitbox: Some(Rect::new(Vec2::new(6.0, 12.0), Vec2::new(28.0, 18.0))),
     knockback: Vec2::new(1.0, 0.0),
     lunge: Vec2::new(5.0, 0.0),
     ..Move::BASE
@@ -53,7 +56,7 @@ pub const RIPOSTE: Move = Move {
     active: 4,
     recovery: 14,
     damage: 1,
-    hitbox: Some(Rect::new(Vec2::new(6.0, 2.0), Vec2::new(22.0, 10.0))),
+    hitbox: Some(Rect::new(Vec2::new(6.0, 2.0), Vec2::new(22.0, 22.0))),
     knockback: Vec2::new(1.0, 0.0),
     ..Move::BASE
 };

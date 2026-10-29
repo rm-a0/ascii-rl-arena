@@ -1,5 +1,7 @@
 use std::ops::{Add, AddAssign, Mul, Sub};
 
+use crate::action::Facing;
+
 /// Downward acceleration in pixels per tick per tick.
 pub const GRAVITY: f32 = 0.25;
 
@@ -78,11 +80,24 @@ impl Rect {
         Self { min, max }
     }
 
+    pub const ZERO: Rect = Rect::new(Vec2::ZERO, Vec2::ZERO);
+
     #[must_use]
     pub fn intersects(&self, rect: &Rect) -> bool {
         self.min.x < rect.max.x
             && self.max.x > rect.min.x
             && self.min.y < rect.max.y
             && self.max.y > rect.min.y
+    }
+
+    /// Move a box drawn relative to the feet, facing right, into the world.
+    #[must_use]
+    pub fn placed(self, feet: Vec2, facing: Facing) -> Rect {
+        let a = feet.x + self.min.x * facing.sign();
+        let b = feet.x + self.max.x * facing.sign();
+        Rect::new(
+            Vec2::new(a.min(b), self.min.y + feet.y),
+            Vec2::new(a.max(b), self.max.y + feet.y),
+        )
     }
 }

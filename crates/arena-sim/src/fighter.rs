@@ -5,7 +5,7 @@ pub mod wanderer;
 use crate::{
     action::{Action, Facing},
     fighter::moves::{Move, Phase},
-    physics::{GRAVITY, Vec2},
+    physics::{GRAVITY, Rect, Vec2},
     world::Arena,
 };
 
@@ -74,6 +74,7 @@ pub struct Stats {
     pub dash_duration: u32,
     /// Counted from the start of a dash.
     pub dash_cooldown: u32,
+    pub body: Rect,
 }
 
 #[derive(Clone, Debug, PartialEq)]
@@ -116,6 +117,27 @@ impl Fighter {
     #[must_use]
     pub fn moves(&self) -> &'static [Move] {
         self.kind.moves()
+    }
+
+    /// Return the body box in the world.
+    #[must_use]
+    pub fn hurtbox(&self) -> Rect {
+        self.stats().body.placed(self.position, self.facing)
+    }
+
+    #[must_use]
+    pub fn attack_box(&self) -> Option<Rect> {
+        match self.state {
+            State::Attack { id, tick, has_hit } => {
+                let move_ = &self.moves()[id];
+                if has_hit || !move_.is_active(tick) {
+                    return None;
+                }
+                let hitbox = move_.hitbox?;
+                Some(hitbox.placed(self.position, self.facing))
+            }
+            _ => None,
+        }
     }
 
     /// Advance the fighter by one tick.
