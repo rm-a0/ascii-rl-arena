@@ -13,4 +13,5 @@ pub enum Event {
         attacker: usize,
         target: usize,
     },
+    Timeout,
 }

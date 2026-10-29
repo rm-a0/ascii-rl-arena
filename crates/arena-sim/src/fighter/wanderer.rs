@@ -59,6 +59,12 @@ pub const MOVES: [Move; 2] = {
 
 /// Return the id of the move that this input starts.
 #[must_use]
-pub fn pick(_pressed: Action, _held: Action, _on_ground: bool) -> Option<usize> {
-    None
+pub fn pick(action: Action, _on_ground: bool) -> Option<usize> {
+    if action.attack {
+        Some(ATTACK_ID)
+    } else if action.cast {
+        Some(CAST_ID)
+    } else {
+        None
+    }
 }

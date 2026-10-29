@@ -35,10 +35,10 @@ impl Kind {
 
     /// Return the id of the move that this input starts, if any.
     #[must_use]
-    pub fn pick(self, pressed: Action, held: Action, on_ground: bool) -> Option<usize> {
+    pub fn pick(self, action: Action, on_ground: bool) -> Option<usize> {
         match self {
-            Kind::Moth => moth::pick(pressed, held, on_ground),
-            Kind::Wanderer => wanderer::pick(pressed, held, on_ground),
+            Kind::Moth => moth::pick(action, on_ground),
+            Kind::Wanderer => wanderer::pick(action, on_ground),
         }
     }
 }
@@ -95,8 +95,6 @@ pub struct Fighter {
     pub on_ground: bool,
     /// Ticks until the next dash can start.
     pub dash_cooldown_left: u32,
-    /// The input of the previous tick, for press and release checks.
-    pub last_action: Action,
     pub state: State,
 }
 
@@ -112,9 +110,13 @@ impl Fighter {
             facing,
             on_ground: true,
             dash_cooldown_left: 0,
-            last_action: Action::default(),
             state: State::Free,
         }
+    }
+
+    #[must_use]
+    pub fn is_dead(&self) -> bool {
+        self.state == State::Dead
     }
 
     #[must_use]
@@ -130,7 +132,7 @@ impl Fighter {
     /// Return the body box in the world. A dead fighter has none, so nothing can hit it.
     #[must_use]
     pub fn hurtbox(&self) -> Option<Rect> {
-        (self.state != State::Dead).then(|| self.stats().body.placed(self.position, self.facing))
+        (!self.is_dead()).then(|| self.stats().body.placed(self.position, self.facing))
     }
 
     /// Return the hitbox in the world and the strike it deals, if the move can hit this tick.
@@ -202,42 +204,40 @@ impl Fighter {
 
     /// Advance the fighter by one tick.
     pub fn update(&mut self, action: Action, arena: Arena) {
-        let pressed = action.pressed(self.last_action);
-        self.steer(action, pressed);
-        if let Some(next) = self.decide(action, pressed) {
+        self.steer(action);
+        if let Some(next) = self.decide(action) {
             self.enter(next);
         }
         self.behave(action);
         self.integrate(arena);
         self.tick_timers();
-        self.last_action = action;
     }
 
     /// Turn and jump. Neither changes the state, so both combine with any start below.
-    fn steer(&mut self, action: Action, pressed: Action) {
+    fn steer(&mut self, action: Action) {
         if self.state != State::Free {
             return;
         }
         if let Some(direction) = action.direction {
             self.facing = direction;
         }
-        if pressed.jump && self.on_ground {
+        if action.jump && self.on_ground {
             self.velocity.y = self.stats().jump_speed;
             self.on_ground = false;
         }
     }
 
     /// Return the state to switch to, or `None` to stay. The first match wins.
-    fn decide(&self, action: Action, pressed: Action) -> Option<State> {
+    fn decide(&self, action: Action) -> Option<State> {
         match self.state {
             State::Free => {
-                if let Some(id) = self.kind.pick(pressed, action, self.on_ground) {
+                if let Some(id) = self.kind.pick(action, self.on_ground) {
                     Some(State::Attack {
                         id,
                         tick: 0,
                         has_hit: false,
                     })
-                } else if pressed.dash && self.dash_cooldown_left == 0 {
+                } else if action.dash && self.dash_cooldown_left == 0 {
                     Some(State::Dash {
                         left: self.stats().dash_duration,
                     })

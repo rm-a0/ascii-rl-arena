@@ -19,16 +19,23 @@ pub struct World {
     /// Index 0 is the player. Index 1 is the boss.
     pub fighters: [Fighter; 2],
     pub tick: u32,
+    pub max_ticks: u32,
 }
 
 impl World {
     #[must_use]
-    pub fn new(arena: Arena, fighters: [Fighter; 2]) -> Self {
+    pub fn new(arena: Arena, fighters: [Fighter; 2], max_ticks: u32) -> Self {
         Self {
             arena,
             fighters,
             tick: 0,
+            max_ticks,
         }
+    }
+
+    #[must_use]
+    pub fn is_over(&self) -> bool {
+        self.fighters.iter().any(Fighter::is_dead) || self.tick >= self.max_ticks
     }
 
     /// Advance the fight by one tick and return what happened. `actions[i]` controls `fighters[i]`.
@@ -65,6 +72,9 @@ impl World {
                 Outcome::Blocked => events.push(Event::Blocked { attacker, target }),
                 Outcome::Died => events.extend([hit, Event::Died { fighter: target }]),
             }
+        }
+        if self.max_ticks <= self.tick {
+            events.push(Event::Timeout);
         }
         events
     }

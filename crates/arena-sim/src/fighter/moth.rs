@@ -73,12 +73,14 @@ pub const MOVES: [Move; 4] = {
     m
 };
 
-/// Return the id of the move that this input starts. Guard wins over attack.
+/// Return the id of the move that this input starts. Guard wins, then lunge, then stab.
 #[must_use]
-pub fn pick(pressed: Action, _held: Action, _on_ground: bool) -> Option<usize> {
-    if pressed.guard {
+pub fn pick(action: Action, _on_ground: bool) -> Option<usize> {
+    if action.guard {
         Some(GUARD_ID)
-    } else if pressed.attack {
+    } else if action.lunge {
+        Some(LUNGE_ID)
+    } else if action.attack {
         Some(STAB_ID)
     } else {
         None

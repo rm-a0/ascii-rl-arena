@@ -16,8 +16,10 @@ impl Facing {
     }
 }
 
-/// The input of one tick. A button is `true` while it is held.
-
+/// The input of one tick. A button is `true` while it is down.
+///
+/// A move button starts its move when the fighter is `Free`. Holding it starts the move
+/// again as soon as the fighter is `Free` again.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Default)]
 #[expect(
     clippy::struct_excessive_bools,
@@ -27,19 +29,8 @@ pub struct Action {
     pub jump: bool,
     pub dash: bool,
     pub attack: bool,
+    pub lunge: bool,
     pub guard: bool,
+    pub cast: bool,
     pub direction: Option<Facing>,
-}
-
-impl Action {
-    #[must_use]
-    pub const fn pressed(self, last: Action) -> Action {
-        Action {
-            jump: self.jump && !last.jump,
-            dash: self.dash && !last.dash,
-            attack: self.attack && !last.attack,
-            guard: self.guard && !last.guard,
-            direction: self.direction,
-        }
-    }
 }
