@@ -4,7 +4,7 @@ pub mod wanderer;
 
 use crate::{
     action::{Action, Facing},
-    fighter::moves::{Move, Phase},
+    fighter::moves::{Move, Phase, Strike},
     physics::{GRAVITY, Rect, Vec2},
     world::Arena,
 };
@@ -60,6 +60,14 @@ pub enum State {
         left: u32,
     },
     Dead,
+}
+
+/// What a strike did to the fighter it reached.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Outcome {
+    Hit,
+    Blocked,
+    Died,
 }
 
 /// Numbers that do not change during a fight.
@@ -119,25 +127,77 @@ impl Fighter {
         self.kind.moves()
     }
 
-    /// Return the body box in the world.
+    /// Return the body box in the world. A dead fighter has none, so nothing can hit it.
     #[must_use]
-    pub fn hurtbox(&self) -> Rect {
-        self.stats().body.placed(self.position, self.facing)
+    pub fn hurtbox(&self) -> Option<Rect> {
+        (self.state != State::Dead).then(|| self.stats().body.placed(self.position, self.facing))
     }
 
+    /// Return the hitbox in the world and the strike it deals, if the move can hit this tick.
     #[must_use]
-    pub fn attack_box(&self) -> Option<Rect> {
-        match self.state {
-            State::Attack { id, tick, has_hit } => {
-                let move_ = &self.moves()[id];
-                if has_hit || !move_.is_active(tick) {
-                    return None;
-                }
-                let hitbox = move_.hitbox?;
-                Some(hitbox.placed(self.position, self.facing))
-            }
-            _ => None,
+    pub fn strike(&self) -> Option<(Rect, Strike)> {
+        let State::Attack { id, tick, has_hit } = self.state else {
+            return None;
+        };
+        let m = &self.moves()[id];
+        if has_hit || !m.is_active(tick) {
+            return None;
         }
+        let hitbox = m.hitbox?.placed(self.position, self.facing);
+        let strike = Strike {
+            damage: m.damage,
+            // Move data points away from the attacker when it faces right.
+            knockback: Vec2::new(m.knockback.x * self.facing.sign(), m.knockback.y),
+            hitstun: m.hitstun,
+            from: self.position,
+        };
+        Some((hitbox, strike))
+    }
+
+    /// Receive a strike. An active guard that faces `strike.from` blocks it.
+    pub fn struck(&mut self, strike: &Strike) -> Outcome {
+        if let Some(guard) = self.guard_against(strike.from) {
+            if let Some(id) = guard.on_block {
+                self.state = State::Attack {
+                    id,
+                    tick: 0,
+                    has_hit: false,
+                };
+            }
+            return Outcome::Blocked;
+        }
+
+        self.health = self.health.saturating_sub(strike.damage);
+        self.velocity = strike.knockback;
+        if strike.knockback.y > 0.0 {
+            self.on_ground = false;
+        }
+        if self.health == 0 {
+            self.state = State::Dead;
+            Outcome::Died
+        } else {
+            self.state = State::Hurt {
+                left: strike.hitstun,
+            };
+            Outcome::Hit
+        }
+    }
+
+    /// Mark the current move as connected, so it cannot hit again.
+    pub fn landed(&mut self) {
+        if let State::Attack { has_hit, .. } = &mut self.state {
+            *has_hit = true;
+        }
+    }
+
+    /// Return the guard move that blocks a strike from `from`, if any.
+    fn guard_against(&self, from: Vec2) -> Option<&'static Move> {
+        let State::Attack { id, tick, .. } = self.state else {
+            return None;
+        };
+        let m = &self.moves()[id];
+        let in_front = (from.x - self.position.x) * self.facing.sign() >= 0.0;
+        (m.guard && m.is_active(tick) && in_front).then_some(m)
     }
 
     /// Advance the fighter by one tick.
@@ -219,7 +279,8 @@ impl Fighter {
                     Some(Phase::Recovery) | None => 0.0,
                 };
             }
-            State::Hurt { .. } | State::Dead => self.velocity.x = 0.0,
+            State::Dead => self.velocity.x = 0.0,
+            State::Hurt { .. } => {}
         }
     }
 

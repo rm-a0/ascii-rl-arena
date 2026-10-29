@@ -7,6 +7,17 @@ pub enum Phase {
     Recovery,
 }
 
+/// One hit as it reaches its target.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Strike {
+    pub damage: u32,
+    /// In world direction, already flipped by the attacker's facing.
+    pub knockback: Vec2,
+    pub hitstun: u32,
+    /// The attacker's feet. A guard must face this point to block.
+    pub from: Vec2,
+}
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Projectile {
     pub spawn: Vec2,
@@ -14,6 +25,7 @@ pub struct Projectile {
     pub hitbox: Rect,
     pub damage: u32,
     pub knockback: Vec2,
+    pub hitstun: u32,
 }
 
 impl Projectile {
@@ -23,6 +35,7 @@ impl Projectile {
         hitbox: Rect::ZERO,
         damage: 0,
         knockback: Vec2::ZERO,
+        hitstun: 0,
     };
 }
 
@@ -34,6 +47,7 @@ pub struct Move {
     pub hitbox: Option<Rect>,
     pub damage: u32,
     pub knockback: Vec2,
+    pub hitstun: u32,
     pub windup: Vec2,
     pub lunge: Vec2,
     pub guard: bool,
@@ -49,6 +63,7 @@ impl Move {
         damage: 0,
         hitbox: None,
         knockback: Vec2::ZERO,
+        hitstun: 0,
         windup: Vec2::ZERO,
         lunge: Vec2::ZERO,
         guard: false,

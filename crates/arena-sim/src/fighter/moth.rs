@@ -28,6 +28,7 @@ pub const STAB: Move = Move {
     recovery: 12,
     damage: 1,
     hitbox: Some(Rect::new(Vec2::new(6.0, 12.0), Vec2::new(28.0, 18.0))),
+    hitstun: 12,
     ..Move::BASE
 };
 
@@ -39,6 +40,7 @@ pub const LUNGE: Move = Move {
     hitbox: Some(Rect::new(Vec2::new(6.0, 12.0), Vec2::new(28.0, 18.0))),
     knockback: Vec2::new(1.0, 0.0),
     lunge: Vec2::new(5.0, 0.0),
+    hitstun: 20,
     ..Move::BASE
 };
 
@@ -58,6 +60,7 @@ pub const RIPOSTE: Move = Move {
     damage: 1,
     hitbox: Some(Rect::new(Vec2::new(6.0, 2.0), Vec2::new(22.0, 22.0))),
     knockback: Vec2::new(1.0, 0.0),
+    hitstun: 20,
     ..Move::BASE
 };
 

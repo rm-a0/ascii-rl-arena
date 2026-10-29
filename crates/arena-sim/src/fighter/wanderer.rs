@@ -29,6 +29,7 @@ pub const ATTACK: Move = Move {
     recovery: 6,
     damage: 1,
     hitbox: Some(Rect::new(Vec2::new(5.0, 6.0), Vec2::new(20.0, 18.0))),
+    hitstun: 12,
     ..Move::BASE
 };
 
@@ -37,6 +38,7 @@ pub const ORB: Projectile = Projectile {
     velocity: Vec2::new(5.0, 0.0),
     hitbox: Rect::new(Vec2::new(-3.0, -3.0), Vec2::new(3.0, 3.0)),
     damage: 1,
+    hitstun: 12,
     ..Projectile::BASE
 };
 
