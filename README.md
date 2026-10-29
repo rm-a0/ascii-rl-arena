@@ -73,8 +73,8 @@ style, so evaluation needs a win rate per opponent.
 **Art.** Each fighter has two hand-made idle frames. There are two arenas, each with two
 frames: a mossy hollow with a ruined arch, and a moonlit lake with a stone bridge. The `n`
 key in the preview switches between them. Attack animations, hit effects and the HUD are
-not made yet. [docs/plan.md](docs/plan.md) lists the simulation work that comes first. Run the sample with `scripts/preview.sh` in kitty, or
-`cargo run -p arena-render --example preview`.
+not made yet. [docs/plan.md](docs/plan.md) lists the simulation work that comes first. Run the sample with `make kitty` in kitty, or with
+`make run` in any terminal. `make` lists all commands.
 
 **Own window.** A window that the game opens itself would give a fixed font and color
 scheme instead of the terminal's.

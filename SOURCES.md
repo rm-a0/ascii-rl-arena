@@ -16,9 +16,3 @@ code from it is copied.
 
 - Study used for the renderer's look: [ansenjeo on Instagram](https://www.instagram.com/ansenjeo/).
   Dense letter glyphs for figures over a textured field.
-
-## Tools and structure
-
-- Study used for the structure of the `ascii-art` skill: [impeccable](https://github.com/pbakaus/impeccable)
-  (Apache-2.0). Its layout of a short SKILL.md, reference playbooks and reviewer roles.
-  Structure only, no text or code is copied.

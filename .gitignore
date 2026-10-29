@@ -12,3 +12,6 @@ __pycache__/
 /runs/
 /checkpoints/
 *.onnx
+
+# Local agent files. The ascii-art skill lives in ../ascii-art-skill.
+.claude/

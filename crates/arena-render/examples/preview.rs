@@ -1,7 +1,8 @@
 //! Show the arena with both fighters idle.
 //!
 //! Run: `scripts/preview.sh` for a kitty window whose font fits the grid, or
-//! `cargo run -p arena-render --example preview`. Keys: space pause, q quit.
+//! `cargo run -p arena-render --example preview`. Keys: n next arena, space pause, q quit.
+//! `-- --stage lake` starts on the lake.
 //!
 //! The picture is always `GRID` cells, centered in the terminal. `-- --fit` sets kitty's
 //! font size so that the grid fills the window. It needs kitty remote control on a socket,
@@ -15,10 +16,10 @@ use std::{
     time::{Duration, Instant},
 };
 
-use arena_render::{BACKDROP, GRID, Renderer, frame::Frame, term};
+use arena_render::{BACKDROP, GRID, Renderer, Stage, frame::Frame, term};
 use arena_sim::{
     action::Facing,
-    fighter::{Fighter, Stats},
+    fighter::{Fighter, Kind},
     physics::Vec2,
     world::{Arena, World},
 };
@@ -30,21 +31,13 @@ use ratatui::{
 };
 
 fn world() -> World {
-    let stats = Stats {
-        max_health: 5,
-        run_speed: 1.5,
-        jump_speed: 4.0,
-        dash_speed: 4.0,
-        dash_duration: 8,
-        dash_cooldown: 30,
-    };
     let arena = Arena {
         ground_y: 0.0,
         left_x: 0.0,
         right_x: 294.0,
     };
-    let player = Fighter::new(stats, Vec2 { x: 112.0, y: 0.0 }, Facing::Right, true);
-    let boss = Fighter::new(stats, Vec2 { x: 182.0, y: 0.0 }, Facing::Left, true);
+    let player = Fighter::new(Kind::Wanderer, Vec2::new(112.0, 0.0), Facing::Right);
+    let boss = Fighter::new(Kind::Moth, Vec2::new(182.0, 0.0), Facing::Left);
     World::new(arena, [player, boss])
 }
 
@@ -130,7 +123,10 @@ fn note(buf: &mut Buffer, x: u16, y: u16, text: &str) {
 fn main() -> io::Result<()> {
     let args: Vec<String> = std::env::args().collect();
     let world = world();
-    let renderer = Renderer::default();
+    let mut renderer = Renderer::default();
+    if arg(&args, "--stage").as_deref() == Some("lake") {
+        renderer.stage = Stage::Lake;
+    }
     let mut frame = Frame::default();
 
     if let Some(path) = arg(&args, "--dump") {
@@ -165,7 +161,12 @@ fn main() -> io::Result<()> {
             renderer.render(&world, t, &mut frame);
             f.render_widget(&frame, rect);
             if rect.y > area.y {
-                note(f.buffer_mut(), area.x, area.y, " space pause · q quit");
+                note(
+                    f.buffer_mut(),
+                    area.x,
+                    area.y,
+                    " n next arena · space pause · q quit",
+                );
             }
         });
         if let Err(e) = drawn {
@@ -185,6 +186,7 @@ fn main() -> io::Result<()> {
         match key.code {
             KeyCode::Char('q') | KeyCode::Esc => break Ok(()),
             KeyCode::Char(' ') => paused_at = paused_at.xor(Some(t)),
+            KeyCode::Char('n') => renderer.stage = renderer.stage.next(),
             _ => {}
         }
     };
