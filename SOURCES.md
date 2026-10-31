@@ -12,6 +12,11 @@ code from it is copied.
 - Study used for the agent's grid observation: [MinAtar](https://arxiv.org/abs/1903.03176)
   (Young and Tian, 2019). One binary channel per object type.
 
+## Code
+
+- Study used for the fighter and state design: [2d-souls](https://github.com/rm-a0/2d-souls)
+  (MIT). The author's earlier pygame game: one entity base, a flat boss state, timers.
+
 ## Art references
 
 - Study used for the renderer's look: [ansenjeo on Instagram](https://www.instagram.com/ansenjeo/).

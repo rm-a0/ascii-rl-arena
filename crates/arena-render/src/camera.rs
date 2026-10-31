@@ -6,10 +6,10 @@ use crate::GRID;
 
 /// Grid columns per world pixel. At this scale the 27 px wanderer is 7 rows tall, the
 /// height of its art.
-const COLS_PER_PX: f32 = 0.62;
+pub const COLS_PER_PX: f32 = 0.62;
 /// Cell height divided by cell width that the art is drawn for: kitty with
 /// `cell_height 115%`. A world pixel is then square on screen.
-const CELL_ASPECT: f32 = 2.5;
+pub const CELL_ASPECT: f32 = 2.5;
 /// The grid row of the ground surface in the background art. Fighters stand on the row
 /// above it.
 pub const GROUND_ROW: i32 = 39;

@@ -1,8 +1,10 @@
-//! Show the arena with both fighters idle.
+//! Run a fight: the moth's bot against the wanderer. The wanderer stands still until
+//! `Keyboard` exists.
 //!
 //! Run: `scripts/preview.sh` for a kitty window whose font fits the grid, or
-//! `cargo run -p arena-render --example preview`. Keys: n next arena, space pause, q quit.
-//! `-- --stage lake` starts on the lake.
+//! `cargo run -p arena-render --example preview`. Keys: r restart, n next arena,
+//! space pause, q quit. `-- --stage lake` starts on the lake. `-- --seed 3` picks the
+//! bot's first seed. Each restart adds 1 to it.
 //!
 //! The picture is always `GRID` cells, centered in the terminal. `-- --fit` sets kitty's
 //! font size so that the grid fills the window. It needs kitty remote control on a socket,
@@ -38,7 +40,8 @@ fn world() -> World {
     };
     let player = Fighter::new(Kind::Wanderer, Vec2::new(112.0, 0.0), Facing::Right);
     let boss = Fighter::new(Kind::Moth, Vec2::new(182.0, 0.0), Facing::Left);
-    World::new(arena, [player, boss])
+    // The preview never steps the world, so the fight cannot time out.
+    World::new(arena, [player, boss], u32::MAX)
 }
 
 /// Return the value after `name` in the arguments.
