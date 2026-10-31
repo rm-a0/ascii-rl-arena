@@ -30,8 +30,8 @@ pub struct Action {
     pub dash: bool,
     pub attack: bool,
     pub lunge: bool,
-    pub guard: bool,
     pub cast: bool,
+    pub special: bool,
     pub direction: Option<Facing>,
 }
 
@@ -41,8 +41,8 @@ impl Action {
         dash: false,
         attack: false,
         lunge: false,
-        guard: false,
         cast: false,
+        special: false,
         direction: None,
     };
 }

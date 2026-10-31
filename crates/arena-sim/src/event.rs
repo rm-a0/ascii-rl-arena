@@ -9,9 +9,5 @@ pub enum Event {
     Died {
         fighter: usize,
     },
-    Blocked {
-        attacker: usize,
-        target: usize,
-    },
     Timeout,
 }

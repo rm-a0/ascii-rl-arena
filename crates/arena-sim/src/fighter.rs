@@ -4,7 +4,7 @@ pub mod wanderer;
 
 use crate::{
     action::{Action, Facing},
-    fighter::moves::{Move, Phase, Strike},
+    fighter::moves::{Move, Phase, Shot, Strike},
     physics::{GRAVITY, Rect, Vec2},
     world::Arena,
 };
@@ -33,13 +33,12 @@ impl Kind {
         }
     }
 
-    /// Return the id of the move that this input starts, if any. `countering` is true in
-    /// the window after a block.
+    /// Return the id of the move that this input starts, if any.
     #[must_use]
-    pub fn pick(self, action: Action, on_ground: bool, countering: bool) -> Option<usize> {
+    pub fn pick(self, action: Action, on_ground: bool) -> Option<usize> {
         match self {
-            Kind::Moth => moth::pick(action, on_ground, countering),
-            Kind::Wanderer => wanderer::pick(action, on_ground, countering),
+            Kind::Moth => moth::pick(action, on_ground),
+            Kind::Wanderer => wanderer::pick(action, on_ground),
         }
     }
 }
@@ -63,14 +62,14 @@ pub enum State {
     Dead,
 }
 
-/// Ticks after a block in which `pick` can start a counter move.
-pub const COUNTER_WINDOW: u32 = 10;
+/// The longest move table of any kind.
+pub const MAX_MOVES: usize = 4;
+const _: () = assert!(moth::MOVES.len() <= MAX_MOVES && wanderer::MOVES.len() <= MAX_MOVES);
 
 /// What a strike did to the fighter it reached.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Outcome {
     Hit,
-    Blocked,
     Died,
 }
 
@@ -99,8 +98,8 @@ pub struct Fighter {
     pub on_ground: bool,
     /// Ticks until the next dash can start.
     pub dash_cooldown_left: u32,
-    /// Ticks left in the counter window after a block.
-    pub counter_left: u32,
+    /// Ticks until each move can start again, by move id.
+    pub cooldown_left: [u32; MAX_MOVES],
     pub state: State,
 }
 
@@ -116,7 +115,7 @@ impl Fighter {
             facing,
             on_ground: true,
             dash_cooldown_left: 0,
-            counter_left: 0,
+            cooldown_left: [0; MAX_MOVES],
             state: State::Free,
         }
     }
@@ -158,20 +157,29 @@ impl Fighter {
             // Move data points away from the attacker when it faces right.
             knockback: Vec2::new(m.knockback.x * self.facing.sign(), m.knockback.y),
             hitstun: m.hitstun,
-            from: self.position,
         };
         Some((hitbox, strike))
     }
 
-    /// Receive a strike. An active guard that faces `strike.from` blocks it.
-    pub fn struck(&mut self, strike: &Strike) -> Outcome {
-        if self.guards_against(strike.from) {
-            // End the guard and open the counter window. The brain chooses the answer.
-            self.state = State::Free;
-            self.counter_left = COUNTER_WINDOW;
-            return Outcome::Blocked;
-        }
+    /// Return the shot that the move fires this tick. A move fires on its first active tick.
+    #[must_use]
+    pub fn shot(&self, owner: usize) -> Option<Shot> {
+        let State::Attack { id, tick, .. } = self.state else {
+            return None;
+        };
+        let m = &self.moves()[id];
+        let projectile = m.projectile?;
+        let spawn = Vec2::new(projectile.spawn.x * self.facing.sign(), projectile.spawn.y);
+        (tick == m.first_active()).then(|| Shot {
+            owner,
+            position: self.position + spawn,
+            facing: self.facing,
+            projectile,
+        })
+    }
 
+    /// Receive a strike.
+    pub fn struck(&mut self, strike: &Strike) -> Outcome {
         self.health = self.health.saturating_sub(strike.damage);
         self.velocity = strike.knockback;
         if strike.knockback.y > 0.0 {
@@ -195,23 +203,13 @@ impl Fighter {
         }
     }
 
-    /// Return `true` if an active guard faces `from`.
-    fn guards_against(&self, from: Vec2) -> bool {
-        let State::Attack { id, tick, .. } = self.state else {
-            return false;
-        };
-        let m = &self.moves()[id];
-        let in_front = (from.x - self.position.x) * self.facing.sign() >= 0.0;
-        m.guard && m.is_active(tick) && in_front
-    }
-
-    /// Advance the fighter by one tick.
-    pub fn update(&mut self, action: Action, arena: Arena) {
+    /// Advance the fighter by one tick. `foe` is the other fighter's feet.
+    pub fn update(&mut self, action: Action, arena: Arena, foe: Vec2) {
         self.steer(action);
         if let Some(next) = self.decide(action) {
             self.enter(next);
         }
-        self.behave(action);
+        self.behave(action, foe);
         self.integrate(arena);
         self.tick_timers();
     }
@@ -234,10 +232,8 @@ impl Fighter {
     fn decide(&self, action: Action) -> Option<State> {
         match self.state {
             State::Free => {
-                if let Some(id) = self
-                    .kind
-                    .pick(action, self.on_ground, self.counter_left > 0)
-                {
+                let ready = |id: &usize| self.cooldown_left[*id] == 0;
+                if let Some(id) = self.kind.pick(action, self.on_ground).filter(ready) {
                     Some(State::Attack {
                         id,
                         tick: 0,
@@ -260,13 +256,15 @@ impl Fighter {
     fn enter(&mut self, next: State) {
         match next {
             State::Dash { .. } => self.dash_cooldown_left = self.stats().dash_cooldown,
-            State::Free | State::Attack { .. } | State::Hurt { .. } | State::Dead => {}
+            State::Attack { id, .. } => self.cooldown_left[id] = self.moves()[id].cooldown,
+            State::Free | State::Hurt { .. } | State::Dead => {}
         }
         self.state = next;
     }
 
-    /// Set the horizontal velocity for this tick from the state.
-    fn behave(&mut self, action: Action) {
+    /// Set the velocity for this tick from the state.
+    #[expect(clippy::cast_precision_loss, reason = "tick counts are small")]
+    fn behave(&mut self, action: Action, foe: Vec2) {
         let sign = self.facing.sign();
         match self.state {
             State::Free => {
@@ -279,11 +277,36 @@ impl Fighter {
             }
             State::Attack { id, tick, .. } => {
                 let m = &self.moves()[id];
-                self.velocity.x = match m.phase(tick) {
-                    Some(Phase::Startup) => sign * m.windup.x,
-                    Some(Phase::Active) => sign * m.lunge.x,
-                    Some(Phase::Recovery) | None => 0.0,
+                let phase = m.phase(tick);
+                if phase == Some(Phase::Hold) {
+                    self.velocity = Vec2::ZERO;
+                    self.facing = if foe.x >= self.position.x {
+                        Facing::Right
+                    } else {
+                        Facing::Left
+                    };
+                    return;
+                }
+                if m.aim && phase == Some(Phase::Active) {
+                    // Set the flight once. Later active ticks keep it.
+                    if tick == m.first_active() {
+                        let target = Vec2::new(foe.x, foe.y.min(self.position.y));
+                        self.velocity = (target - self.position) * (1.0 / m.active as f32);
+                    }
+                    return;
+                }
+                let v = match phase {
+                    Some(Phase::Startup) => m.windup,
+                    Some(Phase::Active) => m.lunge,
+                    Some(Phase::Hold | Phase::Recovery) | None => Vec2::ZERO,
                 };
+                // A zero x in the air keeps the drift, so an air attack does not stop the jump.
+                if self.on_ground || v.x != 0.0 {
+                    self.velocity.x = sign * v.x;
+                }
+                if v.y != 0.0 {
+                    self.velocity.y = v.y;
+                }
             }
             State::Dead => self.velocity.x = 0.0,
             State::Hurt { .. } => {}
@@ -293,7 +316,7 @@ impl Fighter {
     /// Apply gravity, move, and keep the fighter inside the arena.
     fn integrate(&mut self, arena: Arena) {
         let dashing = matches!(self.state, State::Dash { .. });
-        if !dashing {
+        if !self.floats() {
             self.velocity.y -= GRAVITY;
         }
         self.position += self.velocity;
@@ -302,6 +325,9 @@ impl Fighter {
             self.position.y = arena.ground_y;
             self.velocity.y = 0.0;
             self.on_ground = true;
+        } else {
+            // A move can lift the fighter without a jump.
+            self.on_ground = false;
         }
 
         let hit_wall = self.position.x <= arena.left_x || self.position.x >= arena.right_x;
@@ -314,10 +340,28 @@ impl Fighter {
         }
     }
 
+    /// Return `true` if gravity does not pull: in a dash, a hold, or an aimed flight.
+    fn floats(&self) -> bool {
+        match self.state {
+            State::Dash { .. } => true,
+            State::Attack { id, tick, .. } => {
+                let m = &self.moves()[id];
+                match m.phase(tick) {
+                    Some(Phase::Hold) => true,
+                    Some(Phase::Active) => m.aim,
+                    Some(Phase::Startup | Phase::Recovery) | None => false,
+                }
+            }
+            State::Free | State::Hurt { .. } | State::Dead => false,
+        }
+    }
+
     /// Count down. A finished dash, move or hurt goes back to `Free`.
     fn tick_timers(&mut self) {
         self.dash_cooldown_left = self.dash_cooldown_left.saturating_sub(1);
-        self.counter_left = self.counter_left.saturating_sub(1);
+        for left in &mut self.cooldown_left {
+            *left = left.saturating_sub(1);
+        }
         self.state = match self.state {
             State::Dash { left } | State::Hurt { left } if left <= 1 => State::Free,
             State::Dash { left } => State::Dash { left: left - 1 },
