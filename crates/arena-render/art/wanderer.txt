@@ -1,4 +1,5 @@
-# The wanderer, idle, facing right. The renderer mirrors it for facing left.
+# The wanderer, facing right. The renderer mirrors it for facing left.
+# The first frames are the idle loop. Each pose after them shows one state.
 # Format: see src/art.rs.
 period 0.55
 anchor 5
@@ -11,6 +12,10 @@ l 7084b8 cloak light
 d 2e3858 cloak dark
 s d0923e scarf
 t c8d0da steel
+u e8eef4 steel light
+f fff3d0 orb core
+h 8a94a4 trail
+g 6a6a70 dust
 frame
   \v    v/
    \d88b/
@@ -44,3 +49,161 @@ ssdcccccdt
  sdcccccclt
    dddddd  t
 
+pose attack.startup
+# Attack: the sword goes up in the windup, sweeps out on the hit, and droops after.
+frame
+  \v    v/
+   \d88b/   /
+   888 88  /
+  ~`Y8 P' /
+~=.d###b./
+  d######b
+   'v"v"'
+--
+  bb    bb
+   bmmmmb   u
+   mmmomm  t
+  smmmomm t
+ssdcccccdt
+  dccccccl
+   dddddd
+
+pose attack.active
+frame
+  \v    v/
+   \d88b/   _
+   888 88     `.
+  ~`Y8 P'       :
+~=.d###b.=--------
+  d######b
+   'v"v"'
+--
+  bb    bb
+   bmmmmb   h
+   mmmomm     hh
+  smmmomm       h
+ssdcccccdtttttuuuu
+  dccccccl
+   dddddd
+
+pose attack.recovery
+frame
+  \v    v/
+   \d88b/
+   888 88
+  ~`Y8 P'
+~=.d###b.\
+  d######b`--.
+   'v"v"'     `-.
+--
+  bb    bb
+   bmmmmb
+   mmmomm
+  smmmomm
+ssdcccccdt
+  dccccccltttu
+   dddddd     tuu
+
+pose cast.startup
+# Cast: specks gather at the free hand, the orb bursts out, wisps rise after.
+frame
+  \v    v/
+   \d88b/
+   888 88 .  '
+  ~`Y8 P' *
+~=.d###b.\ '
+  d######b\
+   'v"v"'  `
+--
+  bb    bb
+   bmmmmb
+   mmmomm s  s
+  smmmomm f
+ssdcccccdt s
+  dcccccclt
+   dddddd  t
+
+pose cast.active
+frame
+  \v    v/
+   \d88b/
+   888 88  . '
+  ~`Y8 P'-=*'
+~=.d###b.\ ' .
+  d######b\
+   'v"v"'  `
+--
+  bb    bb
+   bmmmmb
+   mmmomm  s s
+  smmmommcsss
+ssdcccccdt s s
+  dcccccclt
+   dddddd  t
+
+pose cast.recovery
+frame
+  \v    v/
+   \d88b/   '
+   888 88  .
+  ~`Y8 P'
+~=.d###b.\
+  d######b\
+   'v"v"'  `
+--
+  bb    bb
+   bmmmmb   s
+   mmmomm  s
+  smmmomm
+ssdcccccdt
+  dcccccclt
+   dddddd  t
+
+pose dash
+# Dash: low, the scarf streams behind, dust at the heels.
+frame
+
+  \v    v/
+-  \d88b/
+ - 888 88
+-=~`Y8 P'
+~=d######b\
+ . 'v"v"'  `
+--
+
+  bb    bb
+g  bmmmmb
+ g mmmomm
+sssmmmomm
+ssdcccccclt
+ g dddddd  t
+
+pose hurt
+# Hurt: the head snaps back, a spark flies, the sword hangs.
+frame
+ \v    v/
+  \d88b/  *
+  888 88   '
+ ~`Y8 P'
+~=.d###b.\
+  d######b|
+   'v"v"' '
+--
+ bb    bb
+  bmmmmb  f
+  mmmomm   f
+ smmmomm
+ssdcccccdt
+  dcccccclt
+   dddddd t
+
+pose dead
+# Dead: the cloak flat on the ground, the head beside it, the sword dropped.
+frame
+             \v    v/
+ ~=.d#####b.  \d88b/
+   'd#######b'888 88  .--====-
+--
+             bb    bb
+ ssddcccccld  bmmmmb
+   ddcccccccldmmmomm  tttttttu

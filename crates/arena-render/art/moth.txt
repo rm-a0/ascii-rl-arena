@@ -1,4 +1,5 @@
-# The moth duelist, idle, facing right. The renderer mirrors it for facing left.
+# The moth duelist, facing right. The renderer mirrors it for facing left.
+# The first frames are the idle loop. Each pose after them shows one state.
 # Format: see src/art.rs.
 period 0.7
 anchor 9
@@ -12,6 +13,9 @@ w e0566a wing light
 y 72182c wing dark
 k 6a5064 body
 t c8d0da steel
+u e8eef4 steel light
+h 8a94a4 trail
+g 6a6a70 dust
 frame
  ~-._
      `-.\
@@ -60,3 +64,406 @@ frame
  yxxxxxy kk   t
  yyyyyy  kk    t
   yyyy   kk     t
+pose stab.startup
+# Stab: the needle goes up in the windup, out on the hit, and droops in recovery.
+frame
+ ~-._
+     `-.\
+        .d8b.   /
+        88b\8  /
+        `Y8P' /
+    .xx.oOOo./
+  .xXXX\|##|/
+ /XXXXXX|##|
+ qXXXXX/ ||
+  qXXX/  ||
+   'v'   /\
+--
+ aaaa
+     aaaa
+        mmmmm   u
+        mmmem  t
+        mmmmm t
+    wxxwrrrrrt
+  wxxxxykkkkk
+ yxxxxxxkkkk
+ yxxxxxy kk
+  yyyyy  kk
+   yyy   kk
+pose stab.active
+frame
+ ~-._
+     `-.\
+        .d8b.
+        88b\8
+        `Y8P'
+    .xx.oOOo.
+  .xXXX\|##|-=====--------
+ /XXXXXX|##|
+ qXXXXX/ ||
+  qXXX/  | \
+   'v'   /  \
+--
+ aaaa
+     aaaa
+        mmmmm
+        mmmem
+        mmmmm
+    wxxwrrrrr
+  wxxxxykkkkktttttuuuuuuuu
+ yxxxxxxkkkk
+ yxxxxxy kk
+  yyyyy  k k
+   yyy   k  k
+pose stab.recovery
+frame
+ ~-._
+     `-.\
+        .d8b.
+        88b\8
+        `Y8P'
+    .xx.oOOo.
+  .xXXX\|##|\
+ /XXXXXX|##| `--._
+ qXXXXX/ ||       `--.
+  qXXX/  | \
+   'v'   /  \
+--
+ aaaa
+     aaaa
+        mmmmm
+        mmmem
+        mmmmm
+    wxxwrrrrr
+  wxxxxykkkkk
+ yxxxxxxkkkk ttttt
+ yxxxxxy kk       tttu
+  yyyyy  k k
+   yyy   k  k
+
+pose lunge.startup
+# Lunge: a crouch with the needle drawn short, a long flying thrust, then it leans on the
+# needle, stuck in the ground.
+frame
+
+ ~-._
+     `-.\
+        .d8b.
+        88b\8
+        `Y8P'
+    .xx.oOOo.
+  .xXXX\|##|-==-
+ /XXXXXX|##|
+ qXXXXX/ ||
+  'vXv'  /\
+--
+
+ aaaa
+     aaaa
+        mmmmm
+        mmmem
+        mmmmm
+    wxxwrrrrr
+  wxxxxykkkkkttu
+ yxxxxxxkkkk
+ yxxxxxy kk
+  yyyyy  kk
+pose lunge.active
+frame
+ ~-._
+     `-.\
+        .d8b.
+        88b\8
+  - -   `Y8P'
+    .xx.oOOo.
+ .xXXXX\|##|-=====--------
+/XXXXXXX|##|
+ qXXXXX/ |\
+  qXXX/ /  \
+   'v'  .'  '.
+--
+ aaaa
+     aaaa
+        mmmmm
+        mmmem
+  g g   mmmmm
+    wxxwrrrrr
+ wxxxxxykkkkktttttuuuuuuuu
+yxxxxxxxkkkk
+ yxxxxxy kk
+  yyyyy k  k
+   yyy  gg  gg
+pose lunge.recovery
+frame
+ ~-._
+     `-.\
+         .d8b.
+         88b\8
+         `Y8P'
+    .xx.oOOo.
+  .xXXX\|##|\_
+ /XXXXXX|##|  |
+ qXXXXX/ | \  |
+  qXXX/  |  \ |
+   'v'   /   \|.
+--
+ aaaa
+     aaaa
+         mmmmm
+         mmmem
+         mmmmm
+    wxxwrrrrr
+  wxxxxykkkkkk
+ yxxxxxxkkkk  t
+ yxxxxxy k k  t
+  yyyyy  k  k t
+   yyy   k   ktg
+pose dive.startup
+# Dive: it rises with the wing up and the needle down, dives at 45 degrees, and lands
+# with the needle in the ground.
+frame
+   .
+   |\        .-~
+   |X\      /
+   |XX\    /
+   |XXX\.d8b.
+   qXXXX88b\8
+    qXXX`Y8P'
+     'xxoOOo.
+        |##|\
+  '     |##| |
+     :   ||  |
+  :      ||  |
+     '   /\  '
+--
+   w
+   yw        aaa
+   yxw      a
+   yxxw    a
+   yxxxwmmmmm
+   yxxxxmmmem
+    yxxxmmmmm
+     wxxrrrrr
+        kkkkk
+  h     kkkk t
+     h   kk  t
+  h      kk  t
+     h   kk  u
+pose dive.hold
+# Hold: it hovers with the wing spread and aims the needle at the foe.
+frame
+ ~-._
+     `-.\
+ '      .d8b.
+ .xxXXXx88b\8
+qXXXXXXX`Y8P'
+ 'qXXXXxoOOo.
+ .   'qx|##|\
+        |##| `-.
+   '     ||     `-.
+         ||        `.
+  .  '   ''
+--
+ aaaa
+     aaaa
+ h      mmmmm
+ wxxxxxxmmmem
+yxxxxxxxmmmmm
+ yyxxxxxrrrrr
+ h   yyxkkkkk
+        kkkk ttt
+   g     kk     ttt
+         kk        tu
+  g  g   kk
+pose dive.active
+frame
+ ~--.__
+       `-.\
+        .d8b.
+ .xxXXx.88b\8
+'qXXXXXX`Y8P'
+  'qXXXXoOOo.
+     'qx|##|\
+ `-.     \ \ `-.
+          \ \   `-.
+   `-.     ' '     `-.
+                      `-.
+--
+ aaaaaa
+       aaaa
+        mmmmm
+ wxxxxxwmmmem
+yyxxxxxxmmmmm
+  yyxxxxrrrrr
+     yyxkkkkk
+ hhh     k k ttt
+          k k   ttt
+   hhh     k k     ttt
+                      ttu
+pose dive.recovery
+frame
+
+ ~-._
+     `-.\
+        .d8b.
+        88b\8
+    .xx.`Y8P'
+  .xXXXXoOOo.
+ /XXXXXX|##|`-.
+ qXXXXX/|##|   `-.
+  qXXX/ /  \      `-.
+   'v' /    \      .:`-.'.
+--
+
+ aaaa
+     aaaa
+        mmmmm
+        mmmem
+    wxxwmmmmm
+  wxxxxxrrrrr
+ yxxxxxxkkkkttt
+ yxxxxxykkkk   ttt
+  yxxxy k  k      ttt
+   yyy k    k      ggttugg
+pose gust.startup
+# Gust: the wing cocks back, sweeps forward with a blast of wind, then folds down.
+frame
+   .
+   |\        .-~
+   |X\      /
+   |XX\    /
+   |XXX\.d8b.
+   qXXXX88b\8
+    qXXX`Y8P'
+     'xxoOOo.
+  -===--|##|
+        |##|
+         ||
+         ||
+         /\
+--
+   w
+   yw        aaa
+   yxw      a
+   yxxw    a
+   yxxxwmmmmm
+   yxxxxmmmem
+    yxxxmmmmm
+     wxxrrrrr
+  utttttkkkk
+        kkkk
+         kk
+         kk
+         kk
+pose gust.active
+frame
+ ~-._
+     `-.\
+        .d8b. .xx.     )
+        88b\8/XXXx.     )
+        `Y8P'|XXXXXX\    )
+       .oOOo.\XXXXXp  )   )
+  -===--|##|  \XXXp    )
+        |##|   'v'   )
+         ||
+         ||
+         /\
+--
+ aaaa
+     aaaa
+        mmmmm wxxw     h
+        mmmemyxxxxw     h
+        mmmmmyxxxxxxw    h
+       rrrrrryxxxxxy  h   h
+  utttttkkkk  yxxxy    h
+        kkkk   yyy   h
+         kk
+         kk
+         kk
+pose gust.recovery
+frame
+ ~-._
+     `-.\
+        .d8b.
+        88b\8
+        `Y8P'
+       .oOOo.xx.      '
+       /|##|/XXXx.
+      / |##||XXXXX\  .
+     /   ||  \XXXXp
+    '    ||   \XXp
+         /\    'v'
+--
+ aaaa
+     aaaa
+        mmmmm
+        mmmem
+        mmmmm
+       rrrrrwxxw      h
+       tkkkkwxxxxw
+      t kkkkyxxxxxw  h
+     t   kk  yxxxxy
+    u    kk   yxxy
+         kk    yyy
+pose dash
+# Dash: low, with streaks behind and dust under the feet.
+frame
+
+ ~-._
+     `-.\
+-  -    .d8b.
+        88b\8
+ --     `Y8P'
+    .xx.oOOo.
+  .xXXX\|##|\
+ /XXXXXX|##| \
+ qXXXXX/ ||   \
+  'vv' .'/\ .  \
+--
+
+ aaaa
+     aaaa
+g  g    mmmmm
+        mmmem
+ gg     mmmmm
+    wxxwrrrrr
+  wxxxxykkkkk
+ yxxxxxxkkkk t
+ yxxxxxy kk   t
+  yyyy ggkk g  t
+pose hurt
+# Hurt: the head snaps back, the eye shuts, a spark flies, the feet step back.
+frame
+~-._
+    `-.\
+       .d8b. *
+       88b-8  .
+       `Y8P'
+    .xx.oOOo.
+  .xXXX\|##|
+ /XXXXXX|##|\
+ qXXXXX/ ||  \
+  qXXX/  ||   '
+   'v'  /\
+--
+aaaa
+    aaaa
+       mmmmm e
+       mmmem  e
+       mmmmm
+    wxxwrrrrr
+  wxxxxykkkk
+ yxxxxxxkkkkk
+ yxxxxxy kk  t
+  yyyyy  kk   t
+   yyy  kk
+pose dead
+# Dead: fallen, wings spread on the ground, the needle beside it.
+frame
+       .xXXXx.     .d8b.
+   .xXXXXXXXXXq.   88-b8
+  'vXXXXXXXXXv'|##|`Y8P'  -====----.
+--
+       wxxxxxw     mmmmm
+   wxxxxxxxxxxyw   mmkmm
+  yyxxxxxxxxxyykkkkmmmmm  tttttttttu

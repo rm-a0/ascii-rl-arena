@@ -1,0 +1,16 @@
+# The wanderer's orb in flight, facing right. The anchor is the center of the orb.
+# Format: see src/art.rs.
+period 0.12
+anchor 3
+palette
+f fff3d0 core
+s d0923e glow
+h 8a94a4 trail
+frame
+ -=@
+--
+ hsf
+frame
+.-=@
+--
+hhsf

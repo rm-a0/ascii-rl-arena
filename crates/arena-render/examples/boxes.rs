@@ -28,8 +28,8 @@ use arena_sim::{
 const SHEET: [(Kind, &str, Move); 6] = [
     (Kind::Moth, "STAB", moth::STAB),
     (Kind::Moth, "LUNGE", moth::LUNGE),
-    (Kind::Moth, "GUARD", moth::GUARD),
-    (Kind::Moth, "RIPOSTE", moth::RIPOSTE),
+    (Kind::Moth, "DIVE", moth::DIVE),
+    (Kind::Moth, "GUST", moth::GUST),
     (Kind::Wanderer, "ATTACK", wanderer::ATTACK),
     (Kind::Wanderer, "CAST", wanderer::CAST),
 ];
@@ -80,7 +80,8 @@ fn art(text: &str) -> Art {
 
 /// Draw one move: title, art, boxes and a ruler in world pixels from the feet.
 fn panel(frame: &mut Frame, left: i32, top: i32, kind: Kind, name: &str, m: &Move, art: &Art) {
-    let sprite = art.frame(0.0, 1.0);
+    // The active pose, so that the art can be checked against the hitbox.
+    let sprite = art.pose(&format!("{}.active", name.to_lowercase()), 0.0, 1.0);
     let feet = (left + 2 + sprite.anchor as i32, top + 11);
 
     let who = match kind {
@@ -89,13 +90,10 @@ fn panel(frame: &mut Frame, left: i32, top: i32, kind: Kind, name: &str, m: &Mov
     };
     let title = format!("{who} {name}");
     text(frame, left + 1, top, &title, TITLE);
-    let mut data = format!(
+    let data = format!(
         "{}/{}/{}  dmg {}",
         m.startup, m.active, m.recovery, m.damage
     );
-    if m.guard {
-        data.push_str("  guard");
-    }
     text(frame, left + 3 + title.len() as i32, top, &data, NOTE);
 
     tint(frame, feet, kind.stats().body, Vec2::ZERO, BODY, 0.35);
