@@ -2,7 +2,7 @@ use std::ops::Range;
 
 use arena_sim::{
     action::{Action, Facing},
-    fighter::{COUNTER_WINDOW, Fighter, State, moth, moves::Move},
+    fighter::{Fighter, State, moth, moves::Move},
     physics::{Rect, Vec2},
     world::World,
 };
@@ -11,13 +11,16 @@ use rand_pcg::Pcg32;
 
 use crate::Controller;
 
-/// Tick of the foe's attack on which the bot sees it. Keep it below the foe's startup minus
-/// the guard's startup, or the guard comes too late.
-const REACTION: u32 = 4;
-const GUARD_CHANCE: f64 = 2.0 / 3.0;
-const RIPOSTE_CHANCE: f64 = 0.5;
 /// Feet closer than this, in pixels, are too close to fight. The bot backs off.
 const TOO_CLOSE: f32 = 8.0;
+/// Feet closer than this, in pixels, crowd the bot. After a hit it gusts or dashes away.
+const CROWDED: f32 = 36.0;
+/// Largest gap between the feet, in pixels, from which the stab catches a foe that runs.
+const STAB_GAP: f32 = 50.0;
+/// Gap between the feet, in pixels, where the bot can dive. The dive aims itself.
+const DIVE_RANGE: Range<f32> = 30.0..150.0;
+/// Chance to dive on a choice in range, when the dive is ready.
+const DIVE_CHANCE: f64 = 0.15;
 /// Ticks of rest after the bot's own move. This gives the foe a window to attack.
 const REST: Range<u32> = 15..40;
 /// Ticks that one plan lasts.
@@ -30,6 +33,8 @@ pub struct MothBot {
     plan: Plan,
     /// Ticks until the next choice. Counts down only while the fighter is `Free`.
     left: u32,
+    /// The fighter was `Hurt` on the last tick.
+    was_hurt: bool,
 }
 
 /// What the legs do while nothing needs an answer.
@@ -45,15 +50,14 @@ impl Controller for MothBot {
     fn act(&mut self, world: &World, me: usize) -> Action {
         let foe = &world.fighters[1 - me];
         let me = &world.fighters[me];
+        let recovered = self.was_hurt && me.state == State::Free;
+        self.was_hurt = matches!(me.state, State::Hurt { .. });
 
         // The sim runs a started move. Release all buttons, or a held one starts it again.
         if me.state != State::Free {
             return Action::BASE;
         }
-        if let Some(action) = self.react(me, foe) {
-            return action;
-        }
-        if let Some(action) = self.counter(me, foe) {
+        if recovered && let Some(action) = self.escape(me, foe) {
             return action;
         }
         if let Some(action) = self.punish(me, foe) {
@@ -73,57 +77,41 @@ impl MothBot {
             rng: Pcg32::seed_from_u64(seed),
             plan: Plan::Idle,
             left: 0,
+            was_hurt: false,
         }
     }
 
-    /// Guard an attack that can reach the bot, on a coin flip. Roll once per attack.
-    fn react(&mut self, me: &Fighter, foe: &Fighter) -> Option<Action> {
-        let State::Attack { id, tick, .. } = foe.state else {
-            return None;
-        };
-        let m = &foe.moves()[id];
-        if tick != REACTION || !can_hit(m, foe.position, foe.facing, me) {
+    /// Answer a hit on the first free tick after it, if the foe is still close: gust or
+    /// dash away, on a coin flip.
+    fn escape(&mut self, me: &Fighter, foe: &Fighter) -> Option<Action> {
+        if (foe.position.x - me.position.x).abs() >= CROWDED {
             return None;
         }
-        let guard = Action {
-            guard: true,
-            direction: Some(toward(me, foe)),
-            ..Action::BASE
-        };
-        self.rng.random_bool(GUARD_CHANCE).then_some(guard)
-    }
-
-    /// Answer a block once, on the first tick of the counter window: riposte on a coin flip,
-    /// or back off.
-    fn counter(&mut self, me: &Fighter, foe: &Fighter) -> Option<Action> {
-        if me.counter_left != COUNTER_WINDOW {
-            return None;
-        }
-        let to = toward(me, foe);
-        if can_hit(&moth::RIPOSTE, me.position, to, foe) && self.rng.random_bool(RIPOSTE_CHANCE) {
-            // In the counter window, the attack button starts the riposte.
-            let riposte = Action {
-                attack: true,
-                direction: Some(to),
+        if self.rng.random_bool(0.5) {
+            let gust = Action {
+                special: true,
+                direction: Some(toward(me, foe)),
                 ..Action::BASE
             };
-            Some(self.commit(riposte))
-        } else {
-            Some(self.start(Plan::BackOff, me, foe))
+            return Some(self.commit(gust));
         }
+        // Keep backing off after the dash.
+        self.plan = Plan::BackOff;
+        self.left = self.rng.random_range(PLAN);
+        Some(Action {
+            dash: true,
+            direction: Some(toward(foe, me)),
+            ..Action::BASE
+        })
     }
 
     /// Stab a foe that is stuck in its move after a miss and cannot hit the bot.
     fn punish(&mut self, me: &Fighter, foe: &Fighter) -> Option<Action> {
-        // In the counter window, attack is the riposte, and `counter` decides that.
-        if me.counter_left > 0 {
-            return None;
-        }
         let State::Attack { id, tick, .. } = foe.state else {
             return None;
         };
         let m = &foe.moves()[id];
-        let stuck_for = (m.startup + m.active + m.recovery).saturating_sub(tick);
+        let stuck_for = (m.first_active() + m.active + m.recovery).saturating_sub(tick);
         let safe = foe
             .strike()
             .is_none_or(|(hitbox, _)| me.hurtbox().is_none_or(|body| !hitbox.intersects(&body)));
@@ -154,10 +142,30 @@ impl MothBot {
             direction: Some(to),
             ..Action::BASE
         };
+        let dive = Action {
+            cast: true,
+            direction: Some(to),
+            ..Action::BASE
+        };
+        let gust = Action {
+            special: true,
+            direction: Some(to),
+            ..Action::BASE
+        };
+        let gap = (foe.position.x - me.position.x).abs();
+        let dive_ready = me.cooldown_left[moth::DIVE_ID] == 0 && DIVE_RANGE.contains(&gap);
         let roll = self.rng.random_range(0..100);
-        if (foe.position.x - me.position.x).abs() < TOO_CLOSE {
+        if gap < TOO_CLOSE {
             self.start(Plan::BackOff, me, foe)
-        } else if can_hit(&moth::STAB, me.position, to, foe) {
+        } else if dive_ready && self.rng.random_bool(DIVE_CHANCE) {
+            self.commit(dive)
+        } else if gap < CROWDED {
+            match roll {
+                0..40 => self.commit(gust),
+                40..70 => self.commit(stab),
+                _ => self.start(Plan::BackOff, me, foe),
+            }
+        } else if in_stab_range(me, foe) {
             match roll {
                 0..50 => self.commit(stab),
                 50..75 => self.start(Plan::BackOff, me, foe),
@@ -198,7 +206,7 @@ impl MothBot {
         let direction = match self.plan {
             Plan::Idle => None,
             // Stop in stab range, so that the next choice can stab.
-            Plan::Approach if can_hit(&moth::STAB, me.position, to, foe) => {
+            Plan::Approach if in_stab_range(me, foe) => {
                 self.left = 0;
                 None
             }
@@ -220,6 +228,12 @@ fn toward(me: &Fighter, foe: &Fighter) -> Facing {
     } else {
         Facing::Left
     }
+}
+
+/// Return `true` if a stab now hits the foe, even if it runs.
+fn in_stab_range(me: &Fighter, foe: &Fighter) -> bool {
+    (foe.position.x - me.position.x).abs() < STAB_GAP
+        && can_hit(&moth::STAB, me.position, toward(me, foe), foe)
 }
 
 /// Return `true` if move `m`, started at `feet`, can reach `target` where it stands now.

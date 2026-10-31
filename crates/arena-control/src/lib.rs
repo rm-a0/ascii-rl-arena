@@ -1,3 +1,4 @@
+pub mod keyboard;
 pub mod moth_bot;
 
 use arena_sim::{action::Action, world::World};
