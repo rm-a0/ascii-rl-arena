@@ -49,7 +49,6 @@ pub const GUARD: Move = Move {
     active: 24,
     recovery: 8,
     guard: true,
-    on_block: Some(RIPOSTE_ID),
     ..Move::BASE
 };
 
@@ -74,12 +73,15 @@ pub const MOVES: [Move; 4] = {
 };
 
 /// Return the id of the move that this input starts. Guard wins, then lunge, then stab.
+/// In the counter window, attack starts the riposte instead of the stab.
 #[must_use]
-pub fn pick(action: Action, _on_ground: bool) -> Option<usize> {
+pub fn pick(action: Action, _on_ground: bool, countering: bool) -> Option<usize> {
     if action.guard {
         Some(GUARD_ID)
     } else if action.lunge {
         Some(LUNGE_ID)
+    } else if action.attack && countering {
+        Some(RIPOSTE_ID)
     } else if action.attack {
         Some(STAB_ID)
     } else {

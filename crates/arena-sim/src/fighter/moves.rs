@@ -51,7 +51,6 @@ pub struct Move {
     pub windup: Vec2,
     pub lunge: Vec2,
     pub guard: bool,
-    pub on_block: Option<usize>,
     pub projectile: Option<Projectile>,
 }
 
@@ -67,7 +66,6 @@ impl Move {
         windup: Vec2::ZERO,
         lunge: Vec2::ZERO,
         guard: false,
-        on_block: None,
         projectile: None,
     };
 

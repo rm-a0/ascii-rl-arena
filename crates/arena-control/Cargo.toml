@@ -5,6 +5,9 @@ edition.workspace = true
 license.workspace = true
 
 [dependencies]
+arena-sim = { path = "../arena-sim" }
+rand = { version = "0.10", default-features = false }
+rand_pcg = "0.10"
 
 [lints]
 workspace = true

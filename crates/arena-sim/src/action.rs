@@ -34,3 +34,15 @@ pub struct Action {
     pub cast: bool,
     pub direction: Option<Facing>,
 }
+
+impl Action {
+    pub const BASE: Action = Action {
+        jump: false,
+        dash: false,
+        attack: false,
+        lunge: false,
+        guard: false,
+        cast: false,
+        direction: None,
+    };
+}

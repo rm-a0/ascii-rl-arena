@@ -1,14 +1,7 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+pub mod moth_bot;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+use arena_sim::{action::Action, world::World};
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
+pub trait Controller {
+    fn act(&mut self, world: &World, me: usize) -> Action;
 }

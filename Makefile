@@ -4,7 +4,7 @@
 ARGS ?=
 
 .DEFAULT_GOAL := help
-.PHONY: help build run kitty test lint fmt clean
+.PHONY: help build run kitty boxes test lint fmt clean
 
 help: ## List the commands.
 	@grep -E '^[a-z]+:.*## ' $(MAKEFILE_LIST) | awk -F ':.*## ' '{printf "  make %-6s %s\n", $$1, $$2}'
@@ -17,6 +17,9 @@ run: ## Run the preview in this terminal.
 
 kitty: ## Run the preview in a full-screen kitty window that fits the grid.
 	scripts/preview.sh $(ARGS)
+
+boxes: ## Print every move's hitbox over the fighter art.
+	cargo run -q -p arena-render --example boxes
 
 test: ## Run all tests.
 	cargo test --workspace

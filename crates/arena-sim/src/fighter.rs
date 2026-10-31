@@ -33,12 +33,13 @@ impl Kind {
         }
     }
 
-    /// Return the id of the move that this input starts, if any.
+    /// Return the id of the move that this input starts, if any. `countering` is true in
+    /// the window after a block.
     #[must_use]
-    pub fn pick(self, action: Action, on_ground: bool) -> Option<usize> {
+    pub fn pick(self, action: Action, on_ground: bool, countering: bool) -> Option<usize> {
         match self {
-            Kind::Moth => moth::pick(action, on_ground),
-            Kind::Wanderer => wanderer::pick(action, on_ground),
+            Kind::Moth => moth::pick(action, on_ground, countering),
+            Kind::Wanderer => wanderer::pick(action, on_ground, countering),
         }
     }
 }
@@ -61,6 +62,9 @@ pub enum State {
     },
     Dead,
 }
+
+/// Ticks after a block in which `pick` can start a counter move.
+pub const COUNTER_WINDOW: u32 = 10;
 
 /// What a strike did to the fighter it reached.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -95,6 +99,8 @@ pub struct Fighter {
     pub on_ground: bool,
     /// Ticks until the next dash can start.
     pub dash_cooldown_left: u32,
+    /// Ticks left in the counter window after a block.
+    pub counter_left: u32,
     pub state: State,
 }
 
@@ -110,6 +116,7 @@ impl Fighter {
             facing,
             on_ground: true,
             dash_cooldown_left: 0,
+            counter_left: 0,
             state: State::Free,
         }
     }
@@ -158,14 +165,10 @@ impl Fighter {
 
     /// Receive a strike. An active guard that faces `strike.from` blocks it.
     pub fn struck(&mut self, strike: &Strike) -> Outcome {
-        if let Some(guard) = self.guard_against(strike.from) {
-            if let Some(id) = guard.on_block {
-                self.state = State::Attack {
-                    id,
-                    tick: 0,
-                    has_hit: false,
-                };
-            }
+        if self.guards_against(strike.from) {
+            // End the guard and open the counter window. The brain chooses the answer.
+            self.state = State::Free;
+            self.counter_left = COUNTER_WINDOW;
             return Outcome::Blocked;
         }
 
@@ -192,14 +195,14 @@ impl Fighter {
         }
     }
 
-    /// Return the guard move that blocks a strike from `from`, if any.
-    fn guard_against(&self, from: Vec2) -> Option<&'static Move> {
+    /// Return `true` if an active guard faces `from`.
+    fn guards_against(&self, from: Vec2) -> bool {
         let State::Attack { id, tick, .. } = self.state else {
-            return None;
+            return false;
         };
         let m = &self.moves()[id];
         let in_front = (from.x - self.position.x) * self.facing.sign() >= 0.0;
-        (m.guard && m.is_active(tick) && in_front).then_some(m)
+        m.guard && m.is_active(tick) && in_front
     }
 
     /// Advance the fighter by one tick.
@@ -231,7 +234,10 @@ impl Fighter {
     fn decide(&self, action: Action) -> Option<State> {
         match self.state {
             State::Free => {
-                if let Some(id) = self.kind.pick(action, self.on_ground) {
+                if let Some(id) = self
+                    .kind
+                    .pick(action, self.on_ground, self.counter_left > 0)
+                {
                     Some(State::Attack {
                         id,
                         tick: 0,
@@ -311,6 +317,7 @@ impl Fighter {
     /// Count down. A finished dash, move or hurt goes back to `Free`.
     fn tick_timers(&mut self) {
         self.dash_cooldown_left = self.dash_cooldown_left.saturating_sub(1);
+        self.counter_left = self.counter_left.saturating_sub(1);
         self.state = match self.state {
             State::Dash { left } | State::Hurt { left } if left <= 1 => State::Free,
             State::Dash { left } => State::Dash { left: left - 1 },
