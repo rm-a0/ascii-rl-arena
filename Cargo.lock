@@ -27,6 +27,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "arena-env"
+version = "0.1.0"
+dependencies = [
+ "arena-sim",
+]
+
+[[package]]
 name = "arena-render"
 version = "0.1.0"
 dependencies = [
