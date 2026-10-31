@@ -66,6 +66,11 @@ impl Vec2 {
     }
 
     pub const ZERO: Vec2 = Vec2::new(0.0, 0.0);
+
+    #[must_use]
+    pub fn distance(&self, v: &Vec2) -> f32 {
+        ((self.x - v.x).powi(2) + (self.y - v.y).powi(2)).sqrt()
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Default)]

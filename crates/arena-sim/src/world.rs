@@ -99,7 +99,8 @@ impl World {
                 Outcome::Died => events.extend([hit, Event::Died { fighter: target }]),
             }
         }
-        if self.max_ticks <= self.tick {
+        // A death on the last tick is a win or a loss, not a timeout.
+        if self.max_ticks <= self.tick && !self.fighters.iter().any(Fighter::is_dead) {
             events.push(Event::Timeout);
         }
         events
