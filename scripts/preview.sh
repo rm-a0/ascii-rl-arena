@@ -1,6 +1,6 @@
 #!/bin/sh
 # Open the renderer preview in a full-screen kitty window whose font fits the grid.
-# Extra arguments go to the preview, for example: scripts/preview.sh --backdrop arena.png
+# Extra arguments go to the preview, for example: scripts/preview.sh --stage lake
 # Remote control only listens on this window's own socket, so the preview can set the font.
 cd "$(dirname "$0")/.." || exit 1
 exec kitty --start-as=fullscreen \
