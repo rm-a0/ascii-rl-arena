@@ -30,6 +30,7 @@ dependencies = [
 name = "arena-env"
 version = "0.1.0"
 dependencies = [
+ "arena-control",
  "arena-sim",
 ]
 

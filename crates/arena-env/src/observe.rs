@@ -7,7 +7,7 @@ use arena_sim::{
 };
 
 /// Number of values that `observe` writes.
-pub const OBS_LEN: usize = 28;
+pub const OBS_LEN: usize = 55;
 
 /// Pixels per observed unit. Keeps distances in about 0..3.
 const DIST: f32 = 100.0;
@@ -15,14 +15,17 @@ const DIST: f32 = 100.0;
 const SPEED: f32 = 10.0;
 /// Ticks per observed unit, so that times are in seconds.
 const TICKS_PER_SEC: u32 = 60;
+
 /// States of a living fighter: free, dash, attack, hurt.
 const STATES: usize = 4;
+/// Phases of a move: startup, hold, active, recovery.
+const PHASES: usize = 4;
 
-/// Write what fighter `me` sees into `out`. `out` holds at least `OBS_LEN` values.
-pub fn observe(world: &World, me: usize, out: &mut [f32]) {
-    let foe = &world.fighters[1 - me];
-    let me = &world.fighters[me];
-    let foe_right = foe.position.x >= me.position.x;
+/// Write what fighter `me_id` sees into `out`. `out` holds at least `OBS_LEN` values.
+pub fn observe(world: &World, me_id: usize, out: &mut [f32]) {
+    let foe = &world.fighters[1 - me_id];
+    let me = &world.fighters[me_id];
+    let foe_right = foe_right(world, me_id);
 
     // Write each group after the one before it.
     let mut len = 0;
@@ -34,7 +37,21 @@ pub fn observe(world: &World, me: usize, out: &mut [f32]) {
     put(&motion(me, foe, foe_right));
     put(&condition(me));
     put(&timers(me));
+    put(&condition(foe));
+    put(&timers(foe));
+    put(&threat(foe));
+    put(&shot(world, me_id, me, foe_right));
+    put(&shot(world, 1 - me_id, me, foe_right));
+    put(&[clock(world)]);
     debug_assert_eq!(len, OBS_LEN);
+}
+
+/// Return `true` if the foe of fighter `me_id` is to its right or at the same x.
+///
+/// `observe` and `decode` both use this rule, so that "toward" means the same in both.
+#[must_use]
+pub fn foe_right(world: &World, me_id: usize) -> bool {
+    world.fighters[1 - me_id].position.x >= world.fighters[me_id].position.x
 }
 
 /// Return the gap, both heights, and the room behind each fighter.
@@ -107,6 +124,42 @@ fn timers(f: &Fighter) -> [f32; 2 + MAX_MOVES] {
         out[2 + id] = ratio(f.cooldown_left[id], m.cooldown);
     }
     out
+}
+
+/// Return the phase of the move as one-hot, then the seconds until the move can hit.
+///
+/// All values are 0 when the fighter is not in a move.
+fn threat(f: &Fighter) -> [f32; PHASES + 1] {
+    let mut out = [0.0; PHASES + 1];
+    let State::Attack { id, tick, .. } = f.state else {
+        return out;
+    };
+    let m = &f.moves()[id];
+    // The variants are in order: startup 0, hold 1, active 2, recovery 3.
+    out[..PHASES].copy_from_slice(&one_hot::<PHASES>(m.phase(tick).map(|p| p as usize)));
+    out[PHASES] = ratio(m.first_active().saturating_sub(tick), TICKS_PER_SEC);
+    out
+}
+
+/// Return 1 and the offset from `me` of the shot that `owner` has in flight, or all zeros.
+///
+/// A positive x points toward the foe.
+fn shot(world: &World, owner: usize, me: &Fighter, foe_right: bool) -> [f32; 3] {
+    // A cast cooldown is longer than a flight, so a fighter has at most one shot.
+    let Some(s) = world.shots.iter().find(|s| s.owner == owner) else {
+        return [0.0; 3];
+    };
+    let dir_sign = if foe_right { 1.0 } else { -1.0 };
+    [
+        1.0,
+        (s.position.x - me.position.x) * dir_sign / DIST,
+        (s.position.y - me.position.y) / DIST,
+    ]
+}
+
+/// Return the part of the fight time left: 1 at the start, 0 at the timeout.
+fn clock(world: &World) -> f32 {
+    ratio(world.max_ticks.saturating_sub(world.tick), world.max_ticks)
 }
 
 /// Return `N` zeros with a 1 at `slot`. `None` gives all zeros.
