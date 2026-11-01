@@ -4,7 +4,7 @@
 ARGS ?=
 
 .DEFAULT_GOAL := help
-.PHONY: help build run kitty boxes test lint fmt clean
+.PHONY: help build run kitty boxes test lint fmt py smoke clean
 
 help: ## List the commands.
 	@grep -E '^[a-z]+:.*## ' $(MAKEFILE_LIST) | awk -F ':.*## ' '{printf "  make %-6s %s\n", $$1, $$2}'
@@ -30,6 +30,12 @@ lint: ## Check formatting and run clippy.
 
 fmt: ## Format all code.
 	cargo fmt --all
+
+py: ## Build the Python module `arena` into .venv.
+	uv sync
+
+smoke: ## Step random actions through the Python env and print the speed.
+	uv run python train/smoke.py
 
 clean: ## Remove build output.
 	cargo clean

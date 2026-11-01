@@ -1,0 +1,22 @@
+[package]
+name = "arena-py"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+publish = false
+
+[lib]
+# The Python module is `arena`. `uv sync` builds it with maturin.
+name = "arena"
+crate-type = ["cdylib"]
+# A test binary cannot link: Python provides the symbols only at import.
+test = false
+doctest = false
+
+[dependencies]
+arena-env = { path = "../arena-env" }
+numpy = "0.30"
+pyo3 = { version = "0.30", features = ["extension-module", "abi3-py310"] }
+
+[lints]
+workspace = true

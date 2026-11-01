@@ -1,6 +1,6 @@
 use arena_sim::event::Event;
 
-#[derive(Clone, Copy, Debug, PartialEq, Default)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Weights {
     hit_dealt: f32,
     hit_taken: f32,
