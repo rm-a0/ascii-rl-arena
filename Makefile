@@ -38,7 +38,7 @@ smoke: ## Step random actions through the Python env and print the speed.
 	uv run python -m train.smoke
 
 sb3: ## Train the ready-made SB3 PPO to check the env. Pass flags with ARGS.
-	uv run --group baseline python -m train.sb3 $(ARGS)
+	uv run python -m train.sb3 $(ARGS)
 
 clean: ## Remove build output.
 	cargo clean

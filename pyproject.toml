@@ -30,6 +30,8 @@ explicit = true
 torch = { index = "pytorch-cpu" }
 
 [tool.uv]
+# Install SB3 too: its run is the reference in the experiment.
+default-groups = ["baseline"]
 # Rebuild the Rust module when Rust code changes.
 cache-keys = [
     { file = "pyproject.toml" },

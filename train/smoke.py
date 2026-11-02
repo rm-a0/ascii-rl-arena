@@ -5,6 +5,7 @@ import time
 import numpy as np
 
 import arena
+from train.env import FightStats
 
 NUM_ENVS = 8
 STEPS = 1000
@@ -16,12 +17,7 @@ def main() -> None:
     obs = env.reset()
     assert obs.shape == (env.num_envs, arena.OBS_LEN)
     rng = np.random.default_rng(SEED)
-
-    # Reward and length of the fight that runs in each env now.
-    returns = np.zeros(env.num_envs, dtype=np.float32)
-    lengths = np.zeros(env.num_envs, dtype=np.int64)
-    finished_returns: list[float] = []
-    finished_lengths: list[int] = []
+    stats = FightStats(env.num_envs, window=STEPS)
 
     start = time.perf_counter()
     for _ in range(STEPS):
@@ -31,18 +27,14 @@ def main() -> None:
         obs, rewards, dones = env.step(actions)
         assert obs.shape == (env.num_envs, arena.OBS_LEN)
         assert np.isfinite(obs).all()
-
-        returns += rewards
-        lengths += 1
-        finished_returns.extend(returns[dones].tolist())
-        finished_lengths.extend(lengths[dones].tolist())
-        returns[dones] = 0.0
-        lengths[dones] = 0
+        stats.update(rewards, dones)
     seconds = time.perf_counter() - start
 
-    print(f"{len(finished_returns)} fights finished")
-    print(f"mean reward: {np.mean(finished_returns):.1f}")
-    print(f"mean length: {np.mean(finished_lengths):.0f} steps")
+    summary = stats.summary()
+    print(f"{summary['fights']:.0f} fights finished")
+    print(f"mean reward: {summary['reward']:.1f}")
+    print(f"mean length: {summary['length']:.0f} steps")
+    print(f"win rate: {summary['win_rate']:.0%}")
     print(f"{env.num_envs * STEPS / seconds:,.0f} steps per second")
 
 
