@@ -4,7 +4,11 @@ version = "0.1.0"
 description = "Train an agent in the ASCII arena."
 license = "MIT OR Apache-2.0"
 requires-python = ">=3.10"
-dependencies = ["numpy>=2"]
+dependencies = ["numpy>=2", "torch>=2.9"]
+
+[dependency-groups]
+# A ready-made PPO, to check that the env is learnable.
+baseline = ["stable-baselines3>=2.7"]
 
 [build-system]
 requires = ["maturin>=1.9,<2"]
@@ -13,6 +17,15 @@ build-backend = "maturin"
 [tool.maturin]
 manifest-path = "crates/arena-py/Cargo.toml"
 module-name = "arena"
+
+# CPU PyTorch: a small MLP trains faster on CPU, and the CPU wheel is much smaller.
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
 
 [tool.uv]
 # Rebuild the Rust module when Rust code changes.
