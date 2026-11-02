@@ -16,7 +16,9 @@ build-backend = "maturin"
 
 [tool.maturin]
 manifest-path = "crates/arena-py/Cargo.toml"
-module-name = "arena"
+# The Rust code builds `arena._arena`. The Python package `arena` wraps it.
+python-source = "crates/arena-py/python"
+module-name = "arena._arena"
 
 # CPU PyTorch: a small MLP trains faster on CPU, and the CPU wheel is much smaller.
 [[tool.uv.index]]
@@ -35,3 +37,12 @@ cache-keys = [
     { file = "crates/**/Cargo.toml" },
     { file = "crates/**/*.rs" },
 ]
+
+[tool.pyright]
+# Use the uv environment, where `uv sync` installs `arena`.
+venvPath = "."
+venv = ".venv"
+
+[tool.ruff.lint.isort]
+# The env module. Sort it with the project's own imports.
+known-first-party = ["arena"]

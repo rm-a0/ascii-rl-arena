@@ -35,10 +35,10 @@ py: ## Build the Python module `arena` into .venv.
 	uv sync
 
 smoke: ## Step random actions through the Python env and print the speed.
-	uv run python train/smoke.py
+	uv run python -m train.smoke
 
 sb3: ## Train the ready-made SB3 PPO to check the env. Pass flags with ARGS.
-	uv run --group baseline python train/sb3_check.py $(ARGS)
+	uv run --group baseline python -m train.sb3 $(ARGS)
 
 clean: ## Remove build output.
 	cargo clean

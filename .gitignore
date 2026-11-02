@@ -6,6 +6,8 @@
 __pycache__/
 *.py[cod]
 .venv/
+# The Rust module that `uv sync` builds into crates/arena-py/python/arena/.
+*.so
 *.egg-info/
 
 # Training outputs

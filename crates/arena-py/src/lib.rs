@@ -1,4 +1,7 @@
-//! Python module `arena`: a batch of fights that Python steps with one call.
+//! Python module `arena._arena`: a batch of fights that Python steps with one call.
+//!
+//! The package `arena` in `python/` re-exports it, and `_arena.pyi` there holds the type
+//! hints. Keep both the same as this file.
 
 use arena_env::{decode::ACTION_DIMS, env::Env, observe::OBS_LEN, reward::Weights};
 use numpy::{PyArray1, PyArray2, PyArrayMethods, PyReadonlyArray2, ndarray::ArrayView1};
@@ -123,6 +126,7 @@ fn choice(row: &ArrayView1<i64>) -> PyResult<Choice> {
 }
 
 #[pymodule]
+#[pyo3(name = "_arena")]
 fn arena(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<VecEnv>()?;
     m.add("OBS_LEN", OBS_LEN)?;
