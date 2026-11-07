@@ -4,7 +4,11 @@ version = "0.1.0"
 description = "Train an agent in the ASCII arena."
 license = "MIT OR Apache-2.0"
 requires-python = ">=3.10"
-dependencies = ["numpy>=2", "torch>=2.9"]
+dependencies = [
+    "numpy>=2",
+    "torch>=2.9",
+    "tyro>=1.0.17",
+]
 
 [dependency-groups]
 # A ready-made PPO, to check that the env is learnable.

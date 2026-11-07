@@ -7,7 +7,7 @@ use arena_sim::{
 };
 
 use crate::{
-    decode::{ACTION_DIMS, decode},
+    decode::{Choice, decode},
     observe::observe,
     reward::Weights,
 };
@@ -40,7 +40,7 @@ impl Env {
         observe(&self.world, 0, out);
     }
 
-    pub fn step(&mut self, choice: [usize; ACTION_DIMS.len()], out: &mut [f32]) -> (f32, bool) {
+    pub fn step(&mut self, choice: Choice, out: &mut [f32]) -> (f32, bool) {
         let mut reward = 0.0;
         let mut done = false;
         let action = decode(choice, &self.world, 0);

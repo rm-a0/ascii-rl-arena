@@ -15,9 +15,12 @@ pub const CAST_DIM: usize = 4;
 /// Number of options for each control: stand, toward or away, then four buttons up or down.
 pub const ACTION_DIMS: [usize; 5] = [3, 2, 2, 2, 2];
 
+/// One option for each slot of `ACTION_DIMS`.
+pub type Choice = [usize; ACTION_DIMS.len()];
+
 /// Turn the network's choice into the input of fighter `me_id`.
 #[must_use]
-pub fn decode(choice: [usize; ACTION_DIMS.len()], world: &World, me_id: usize) -> Action {
+pub fn decode(choice: Choice, world: &World, me_id: usize) -> Action {
     let side = |right: bool| if right { Facing::Right } else { Facing::Left };
     let foe_right = foe_right(world, me_id);
     let direction = match choice[DIR_DIM] {

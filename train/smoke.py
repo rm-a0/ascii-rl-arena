@@ -3,24 +3,24 @@
 import time
 
 import numpy as np
+import tyro
 
 import arena
+from train.config import Config
 from train.env import FightStats
-
-NUM_ENVS = 8
-STEPS = 1000
-SEED = 0
 
 
 def main() -> None:
-    env = arena.VecEnv(NUM_ENVS, seed=SEED)
+    cfg = tyro.cli(Config, default=Config(num_envs=8, steps=8_000), description=__doc__)
+    steps = cfg.steps // cfg.num_envs
+    env = arena.VecEnv(cfg.num_envs, seed=cfg.env_seed)
     obs = env.reset()
     assert obs.shape == (env.num_envs, arena.OBS_LEN)
-    rng = np.random.default_rng(SEED)
-    stats = FightStats(env.num_envs, window=STEPS)
+    rng = np.random.default_rng(cfg.seed)
+    stats = FightStats(env.num_envs, window=steps)
 
     start = time.perf_counter()
-    for _ in range(STEPS):
+    for _ in range(steps):
         actions = rng.integers(
             0, arena.ACTION_DIMS, size=(env.num_envs, len(arena.ACTION_DIMS))
         )
@@ -35,7 +35,7 @@ def main() -> None:
     print(f"mean reward: {summary['reward']:.1f}")
     print(f"mean length: {summary['length']:.0f} steps")
     print(f"win rate: {summary['win_rate']:.0%}")
-    print(f"{env.num_envs * STEPS / seconds:,.0f} steps per second")
+    print(f"{env.num_envs * steps / seconds:,.0f} steps per second")
 
 
 if __name__ == "__main__":

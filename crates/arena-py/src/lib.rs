@@ -3,20 +3,17 @@
 //! The package `arena` in `python/` re-exports it, and `_arena.pyi` there holds the type
 //! hints. Keep both the same as this file.
 
-use arena_env::{decode::ACTION_DIMS, env::Env, observe::OBS_LEN, reward::Weights};
+use arena_env::{
+    decode::{ACTION_DIMS, Choice},
+    observe::OBS_LEN,
+    reward::Weights,
+};
 use numpy::{PyArray1, PyArray2, PyArrayMethods, PyReadonlyArray2, ndarray::ArrayView1};
 use pyo3::{exceptions::PyValueError, prelude::*};
 
-/// One control choice for each slot of `ACTION_DIMS`.
-type Choice = [usize; ACTION_DIMS.len()];
-
 /// Fights that step together. A fight that ends starts again in the same step.
 #[pyclass]
-struct VecEnv {
-    envs: Vec<Env>,
-    /// Seed of the next fight to start. Each fight gets its own seed.
-    next_seed: u64,
-}
+struct VecEnv(arena_env::vec_env::VecEnv);
 
 #[pymethods]
 impl VecEnv {
@@ -45,26 +42,22 @@ impl VecEnv {
             ));
         }
         let weights = Weights::new(hit_dealt, hit_taken, win, loss);
-        Ok(Self {
-            envs: vec![Env::new(weights, frame_skip); num_envs],
-            next_seed: seed,
-        })
+        Ok(Self(arena_env::vec_env::VecEnv::new(
+            num_envs, weights, frame_skip, seed,
+        )))
     }
 
     #[getter]
     fn num_envs(&self) -> usize {
-        self.envs.len()
+        self.0.num_envs()
     }
 
     /// Start a new fight in every env. Return the observations, shape `(num_envs, OBS_LEN)`.
     fn reset<'py>(&mut self, py: Python<'py>) -> PyResult<Bound<'py, PyArray2<f32>>> {
-        let mut obs = vec![0.0; self.envs.len() * OBS_LEN];
-        let (rows, _) = obs.as_chunks_mut::<OBS_LEN>();
-        for (env, out) in self.envs.iter_mut().zip(rows) {
-            env.reset(self.next_seed, out);
-            self.next_seed += 1;
-        }
-        PyArray1::from_vec(py, obs).reshape([self.envs.len(), OBS_LEN])
+        let n = self.0.num_envs();
+        let mut obs = vec![0.0; n * OBS_LEN];
+        self.0.reset(&mut obs);
+        PyArray1::from_vec(py, obs).reshape([n, OBS_LEN])
     }
 
     /// Step every fight once. `actions` has shape `(num_envs, len(ACTION_DIMS))`.
@@ -86,7 +79,7 @@ impl VecEnv {
         Bound<'py, PyArray1<bool>>,
     )> {
         let actions = actions.as_array();
-        let n = self.envs.len();
+        let n = self.0.num_envs();
         if actions.shape() != [n, ACTION_DIMS.len()] {
             return Err(PyValueError::new_err(format!(
                 "actions must have shape ({n}, {}), not {:?}",
@@ -94,17 +87,15 @@ impl VecEnv {
                 actions.shape()
             )));
         }
+        let mut choices = Vec::with_capacity(n);
+        for row in actions.rows() {
+            choices.push(choice(&row)?);
+        }
+
         let mut obs = vec![0.0; n * OBS_LEN];
         let mut rewards = vec![0.0; n];
         let mut dones = vec![false; n];
-        let (rows, _) = obs.as_chunks_mut::<OBS_LEN>();
-        for (i, (env, out)) in self.envs.iter_mut().zip(rows).enumerate() {
-            (rewards[i], dones[i]) = env.step(choice(&actions.row(i))?, out);
-            if dones[i] {
-                env.reset(self.next_seed, out);
-                self.next_seed += 1;
-            }
-        }
+        self.0.step(&choices, &mut obs, &mut rewards, &mut dones);
         Ok((
             PyArray1::from_vec(py, obs).reshape([n, OBS_LEN])?,
             PyArray1::from_vec(py, rewards),

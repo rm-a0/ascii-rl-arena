@@ -1,8 +1,9 @@
 """Train the ready-made SB3 PPO on the arena: the reference curve for `train/ppo.py`."""
 
-import argparse
+from dataclasses import asdict
 
 import numpy as np
+import tyro
 from gymnasium import spaces
 from stable_baselines3 import PPO
 from stable_baselines3.common.callbacks import BaseCallback
@@ -10,20 +11,8 @@ from stable_baselines3.common.logger import configure
 from stable_baselines3.common.vec_env import VecEnv
 
 import arena
+from train.config import Config
 from train.env import FightStats
-
-NUM_ENVS = 16
-FIGHT_SEEDS_PER_RUN = 1_000_000_000
-LOG_INTERVAL = 5
-PPO_SETTINGS = {
-    "n_steps": 256,
-    "batch_size": 1024,
-    "n_epochs": 4,
-    "learning_rate": 3e-4,
-    "gamma": 0.99,
-    "gae_lambda": 0.95,
-    "ent_coef": 0.01,
-}
 
 
 class ArenaVecEnv(VecEnv):
@@ -81,16 +70,25 @@ class StatsCallback(BaseCallback):
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Train SB3's PPO on the arena.")
-    parser.add_argument("--seed", type=int, default=0)
-    parser.add_argument("--steps", type=int, default=5_000_000)
-    args = parser.parse_args()
-    out = f"runs/sb3/seed{args.seed}"
+    cfg = tyro.cli(Config, description="Train SB3's PPO on the arena.")
+    out = f"runs/sb3/seed{cfg.seed}"
+    cfg.save(out)
 
-    env = ArenaVecEnv(NUM_ENVS, seed=args.seed * FIGHT_SEEDS_PER_RUN)
-    model = PPO("MlpPolicy", env, seed=args.seed, device="cpu", **PPO_SETTINGS)
+    env = ArenaVecEnv(cfg.num_envs, seed=cfg.env_seed)
+    # Same hidden layers as `Agent`, so that only the PPO code differs.
+    policy_kwargs = {"net_arch": [cfg.hidden, cfg.hidden]}
+    model = PPO(
+        "MlpPolicy",
+        env,
+        policy_kwargs=policy_kwargs,
+        seed=cfg.seed,
+        device="cpu",
+        **asdict(cfg.ppo),
+    )
     model.set_logger(configure(out, ["stdout", "csv"]))
-    model.learn(args.steps, callback=StatsCallback(NUM_ENVS), log_interval=LOG_INTERVAL)
+    model.learn(
+        cfg.steps, callback=StatsCallback(cfg.num_envs), log_interval=cfg.log_interval
+    )
     model.save(f"{out}/model")
 
 
