@@ -19,7 +19,9 @@ class FightStats:
         self.fights = 0
 
     def update(
-        self, rewards: npt.NDArray[np.float32], dones: npt.NDArray[np.bool_]
+        self,
+        rewards: npt.NDArray[np.float32],
+        dones: npt.NDArray[np.bool_],
     ) -> None:
         """Add one step. Move the fights that ended to the finished lists."""
         self.rewards += rewards
