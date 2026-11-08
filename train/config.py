@@ -1,4 +1,4 @@
-"""All training settings. `tyro.cli(Config)` makes a command-line flag for each field."""
+"""All training settings. Each field is also a command-line flag."""
 
 import json
 from dataclasses import asdict, dataclass, field
@@ -7,7 +7,7 @@ from pathlib import Path
 
 @dataclass(frozen=True)
 class PPOSettings:
-    """PPO settings that `sb3.py` and `ppo.py` share. Names are SB3's argument names."""
+    """PPO settings of `sb3.py` and `ppo.py`. Names are SB3's argument names."""
 
     n_steps: int = 256  # steps per env in one rollout
     batch_size: int = 1024
@@ -34,6 +34,7 @@ class Config:
 
     @property
     def num_updates(self) -> int:
+        """Return the number of rollouts in the run."""
         return self.steps // (self.num_envs * self.ppo.n_steps)
 
     @property
@@ -42,6 +43,6 @@ class Config:
         return self.seed * 1_000_000_000
 
     def save(self, out: str) -> None:
-        """Write the settings to `<out>/config.json`, so that the run can be repeated."""
+        """Write the settings to `<out>/config.json`."""
         Path(out).mkdir(parents=True, exist_ok=True)
         Path(out, "config.json").write_text(json.dumps(asdict(self), indent=2))

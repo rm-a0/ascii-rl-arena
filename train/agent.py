@@ -1,3 +1,5 @@
+"""The actor-critic network of our own PPO."""
+
 import torch
 from torch import Tensor, nn, stack
 from torch.distributions import Categorical
@@ -6,6 +8,8 @@ import arena
 
 
 class Agent(nn.Module):
+    """Actor and critic as two separate MLPs, with no shared layers."""
+
     def __init__(self, hidden: int) -> None:
         super().__init__()
         state_dim = arena.OBS_LEN
@@ -26,6 +30,7 @@ class Agent(nn.Module):
         )
 
     def value(self, obs: Tensor) -> Tensor:
+        """Return the value of each obs, shape `(N,)`."""
         return self.critic(obs).squeeze(-1)
 
     def act(
@@ -33,6 +38,11 @@ class Agent(nn.Module):
         obs: Tensor,
         action: Tensor | None = None,
     ) -> tuple[Tensor, Tensor, Tensor, Tensor]:
+        """Sample an action, or score `action`. Return it with log-prob, entropy, value.
+
+        Each slot of `ACTION_DIMS` has its own distribution. Log-prob and entropy sum
+        over the slots.
+        """
         logits = self.actor(obs)
         chunks = torch.split(logits, arena.ACTION_DIMS, dim=1)
         dists = [Categorical(logits=chunk) for chunk in chunks]

@@ -16,15 +16,15 @@ from train.env import FightStats
 
 @dataclass
 class Batch:
-    """Everything that one rollout stores. Row `t` is step `t`."""
+    """One rollout. Dimension 0 is the step, dimension 1 is the env."""
 
-    obs: Tensor  # (n_steps, num_envs, OBS_LEN), the obs that each action was chosen in
-    actions: Tensor  # (n_steps, num_envs, len(ACTION_DIMS))
-    log_probs: Tensor  # (n_steps, num_envs)
-    values: Tensor  # (n_steps, num_envs)
-    rewards: Tensor  # (n_steps, num_envs)
-    dones: Tensor  # (n_steps, num_envs), 1 if the fight ended in this step
-    next_value: Tensor  # (num_envs,), value of the obs after the last step
+    obs: Tensor  # the obs that each action was chosen in
+    actions: Tensor
+    log_probs: Tensor
+    values: Tensor
+    rewards: Tensor
+    dones: Tensor  # 1.0 if the fight ended in this step
+    next_value: Tensor  # (num_envs,): value of the obs after the last step
 
     @classmethod
     def empty(cls, n_steps: int, num_envs: int) -> "Batch":
@@ -68,7 +68,7 @@ def collect(
     stats: FightStats,
     n_steps: int,
 ) -> tuple[Batch, NDArray[float32]]:
-    """Play `n_steps` steps in every env. Return the batch and the obs to continue from."""
+    """Play `n_steps` in every env. Return the batch and the obs to continue from."""
     batch = Batch.empty(n_steps, env.num_envs)
     for t in range(n_steps):
         obs_t = torch.from_numpy(obs)
@@ -81,6 +81,7 @@ def collect(
 
 
 def gae(batch: Batch) -> tuple[Tensor, Tensor]:
+    """Return the advantage and the return of each step."""
     return batch.next_value, batch.next_value
 
 
@@ -98,7 +99,7 @@ def main() -> None:
     for update in range(cfg.num_updates):
         batch, obs = collect(env, agent, obs, stats, cfg.ppo.n_steps)
         advantages, returns = gae(batch)
-        # learn(agent, optimizer, batch, advantages, returns)  # 3. improve
+        # learn(agent, optimizer, batch, advantages, returns)
         print(update, stats.summary())
 
 

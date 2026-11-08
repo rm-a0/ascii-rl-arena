@@ -1,4 +1,4 @@
-"""Train the ready-made SB3 PPO on the arena: the reference curve for `train/ppo.py`."""
+"""Train SB3's PPO on the arena. Its curve is the reference for `ppo.py`."""
 
 from dataclasses import asdict
 
@@ -36,7 +36,7 @@ class ArenaVecEnv(VecEnv):
         obs, rewards, dones = self.env.step(self.actions)
         return obs, rewards, dones, [{} for _ in range(self.num_envs)]
 
-    # SB3 requires these. The arena has no gym attributes, methods or wrappers.
+    # SB3 requires these. The arena has no gym attributes or wrappers.
     def close(self):
         pass
 
@@ -75,7 +75,7 @@ def main() -> None:
     cfg.save(out)
 
     env = ArenaVecEnv(cfg.num_envs, seed=cfg.env_seed)
-    # Same hidden layers as `Agent`, so that only the PPO code differs.
+    # Same layers as `Agent`, so that only the PPO code differs.
     policy_kwargs = {"net_arch": [cfg.hidden, cfg.hidden]}
     model = PPO(
         "MlpPolicy",

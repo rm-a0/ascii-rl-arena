@@ -1,4 +1,4 @@
-"""Step random actions through the env. Print how a random agent does and the speed."""
+"""Play random actions. Print the results of a random agent and the env speed."""
 
 import time
 
