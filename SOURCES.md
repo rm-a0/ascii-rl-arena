@@ -11,6 +11,8 @@ code from it is copied.
   (Küttler et al., 2020). It feeds a grid of glyph IDs, not pixels, to the network.
 - Study used for the agent's grid observation: [MinAtar](https://arxiv.org/abs/1903.03176)
   (Young and Tian, 2019). One binary channel per object type.
+- Study used for the clipped policy loss: [Proximal Policy Optimization
+  Algorithms](https://arxiv.org/abs/1707.06347) (Schulman et al., 2017).
 - Study used for advantage estimation: [High-Dimensional Continuous Control Using
   Generalized Advantage Estimation](https://arxiv.org/abs/1506.02438) (Schulman et al.,
   2015).

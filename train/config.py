@@ -25,6 +25,7 @@ class PPOSettings:
 class Config:
     """Settings of one training run."""
 
+    name: str = "ppo"  # the run goes to runs/<name>/seed<seed>
     seed: int = 0
     steps: int = 5_000_000  # env steps over all envs
     num_envs: int = 16
@@ -42,7 +43,12 @@ class Config:
         """Return the first fight seed. Two runs never share a fight."""
         return self.seed * 1_000_000_000
 
-    def save(self, out: str) -> None:
+    @property
+    def out(self) -> str:
+        """Return the folder of the run's files."""
+        return f"runs/{self.name}/seed{self.seed}"
+
+    def save(self) -> None:
         """Write the settings to `<out>/config.json`."""
-        Path(out).mkdir(parents=True, exist_ok=True)
-        Path(out, "config.json").write_text(json.dumps(asdict(self), indent=2))
+        Path(self.out).mkdir(parents=True, exist_ok=True)
+        Path(self.out, "config.json").write_text(json.dumps(asdict(self), indent=2))

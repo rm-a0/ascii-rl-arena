@@ -1,18 +1,27 @@
 """Train our own PPO on the arena."""
 
+import csv
+import time
 from dataclasses import dataclass
 
 import torch
-from torch.optim import Optimizer
+import torch.nn.functional as F
 import tyro
 from numpy import bool_, float32
 from numpy.typing import NDArray
-from torch import Tensor
+from torch import Tensor, nn
+from torch.optim import Optimizer
 
 import arena
 from train.agent import Agent
-from train.config import Config
+from train.config import Config, PPOSettings
 from train.env import FightStats
+
+# Columns of `progress.csv`: one row per update.
+LOG_COLUMNS = (
+    "steps", "time", "fights", "reward", "length", "win_rate",
+    "pg_loss", "v_loss", "entropy", "clip_frac",
+)  # fmt: skip
 
 
 @dataclass
@@ -97,20 +106,63 @@ def gae(batch: Batch, gamma: float, lambda_: float) -> tuple[Tensor, Tensor]:
     return advantages, advantages + batch.values
 
 
+# Based on: https://arxiv.org/abs/1707.06347
 def learn(
     agent: Agent,
     optimizer: Optimizer,
     batch: Batch,
     advantages: Tensor,
     returns: Tensor,
-) -> None:
-    return
+    ppo_cfg: PPOSettings,
+) -> dict[str, float]:
+    """Train on one rollout for `n_epochs`. Return the stats of the last minibatch."""
+    b_obs = batch.obs.flatten(0, 1)
+    b_actions = batch.actions.flatten(0, 1)
+    b_log_probs = batch.log_probs.flatten(0, 1)
+    b_advantages = advantages.flatten(0, 1)
+    b_returns = returns.flatten(0, 1)
+    clip = ppo_cfg.clip_range
+
+    for _ in range(ppo_cfg.n_epochs):
+        perm = torch.randperm(len(b_obs))
+        for start in range(0, len(b_obs), ppo_cfg.batch_size):
+            mb_idx = perm[start : start + ppo_cfg.batch_size]
+
+            _, new_log_prob, entropy, new_value = agent.act(
+                b_obs[mb_idx], b_actions[mb_idx]
+            )
+
+            mb_advantages = b_advantages[mb_idx]
+            mb_advantages = (mb_advantages - mb_advantages.mean()) / (
+                mb_advantages.std() + 1e-8
+            )
+            ratio = (new_log_prob - b_log_probs[mb_idx]).exp()
+
+            unclipped = ratio * mb_advantages
+            clipped = ratio.clamp(1 - clip, 1 + clip) * mb_advantages
+            pg_loss = -torch.min(unclipped, clipped).mean()
+            v_loss = F.mse_loss(new_value, b_returns[mb_idx])
+            loss = (
+                pg_loss + ppo_cfg.vf_coef * v_loss - ppo_cfg.ent_coef * entropy.mean()
+            )
+
+            optimizer.zero_grad()
+            loss.backward()
+            nn.utils.clip_grad_norm_(agent.parameters(), ppo_cfg.max_grad_norm)
+            optimizer.step()
+
+    return {
+        "pg_loss": pg_loss.item(),
+        "v_loss": v_loss.item(),
+        "entropy": entropy.mean().item(),
+        "clip_frac": ((ratio - 1).abs() > clip).float().mean().item(),
+    }
 
 
 def main() -> None:
     cfg = tyro.cli(Config, description="Train our own PPO on the arena.")
-    out = f"runs/ppo/seed{cfg.seed}"
-    cfg.save(out)
+    cfg.save()
+    torch.manual_seed(cfg.seed)
 
     env = arena.VecEnv(cfg.num_envs, seed=cfg.env_seed)
     agent = Agent(cfg.hidden)
@@ -118,11 +170,22 @@ def main() -> None:
     stats = FightStats(cfg.num_envs)
     obs = env.reset()
 
-    for update in range(cfg.num_updates):
-        batch, obs = collect(env, agent, obs, stats, cfg.ppo.n_steps)
-        advantages, returns = gae(batch, cfg.ppo.gamma, cfg.ppo.gae_lambda)
-        learn(agent, optimizer, batch, advantages, returns)
-        print(update, stats.summary())
+    start = time.time()
+    with open(f"{cfg.out}/progress.csv", "w", newline="") as file:
+        log = csv.DictWriter(file, LOG_COLUMNS)
+        log.writeheader()
+        for update in range(cfg.num_updates):
+            batch, obs = collect(env, agent, obs, stats, cfg.ppo.n_steps)
+            advantages, returns = gae(batch, cfg.ppo.gamma, cfg.ppo.gae_lambda)
+            info = learn(agent, optimizer, batch, advantages, returns, cfg.ppo)
+
+            steps = (update + 1) * cfg.num_envs * cfg.ppo.n_steps
+            row = {"steps": steps, "time": time.time() - start} | stats.summary()
+            log.writerow(row | info)
+            if update % cfg.log_interval == 0:
+                print(" ".join(f"{k}={v:.4g}" for k, v in row.items()))
+
+    torch.save(agent.state_dict(), f"{cfg.out}/model.pt")
 
 
 if __name__ == "__main__":

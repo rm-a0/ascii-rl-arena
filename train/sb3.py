@@ -70,9 +70,10 @@ class StatsCallback(BaseCallback):
 
 
 def main() -> None:
-    cfg = tyro.cli(Config, description="Train SB3's PPO on the arena.")
-    out = f"runs/sb3/seed{cfg.seed}"
-    cfg.save(out)
+    cfg = tyro.cli(
+        Config, default=Config(name="sb3"), description="Train SB3's PPO on the arena."
+    )
+    cfg.save()
 
     env = ArenaVecEnv(cfg.num_envs, seed=cfg.env_seed)
     # Same layers as `Agent`, so that only the PPO code differs.
@@ -85,11 +86,11 @@ def main() -> None:
         device="cpu",
         **asdict(cfg.ppo),
     )
-    model.set_logger(configure(out, ["stdout", "csv"]))
+    model.set_logger(configure(cfg.out, ["stdout", "csv"]))
     model.learn(
         cfg.steps, callback=StatsCallback(cfg.num_envs), log_interval=cfg.log_interval
     )
-    model.save(f"{out}/model")
+    model.save(f"{cfg.out}/model")
 
 
 if __name__ == "__main__":
