@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 
 import torch
+from torch.optim import Optimizer
 import tyro
 from numpy import bool_, float32
 from numpy.typing import NDArray
@@ -60,6 +61,7 @@ class Batch:
         self.dones[t] = torch.as_tensor(done)
 
 
+# Based on: https://github.com/vwxyzjn/cleanrl/blob/master/cleanrl/ppo.py
 @torch.no_grad()
 def collect(
     env: arena.VecEnv,
@@ -80,9 +82,29 @@ def collect(
     return batch, obs
 
 
-def gae(batch: Batch) -> tuple[Tensor, Tensor]:
+# Based on: https://arxiv.org/abs/1506.02438
+def gae(batch: Batch, gamma: float, lambda_: float) -> tuple[Tensor, Tensor]:
     """Return the advantage and the return of each step."""
-    return batch.next_value, batch.next_value
+    masks = 1 - batch.dones  # 0 cuts the sum where a fight ended
+    next_values = torch.cat([batch.values[1:], batch.next_value[None]])
+    deltas = batch.rewards + gamma * next_values * masks - batch.values
+
+    advantages = torch.zeros_like(deltas)
+    next_adv = torch.zeros_like(batch.next_value)
+    for t in reversed(range(len(deltas))):
+        next_adv = deltas[t] + gamma * lambda_ * masks[t] * next_adv
+        advantages[t] = next_adv
+    return advantages, advantages + batch.values
+
+
+def learn(
+    agent: Agent,
+    optimizer: Optimizer,
+    batch: Batch,
+    advantages: Tensor,
+    returns: Tensor,
+) -> None:
+    return
 
 
 def main() -> None:
@@ -98,8 +120,8 @@ def main() -> None:
 
     for update in range(cfg.num_updates):
         batch, obs = collect(env, agent, obs, stats, cfg.ppo.n_steps)
-        advantages, returns = gae(batch)
-        # learn(agent, optimizer, batch, advantages, returns)
+        advantages, returns = gae(batch, cfg.ppo.gamma, cfg.ppo.gae_lambda)
+        learn(agent, optimizer, batch, advantages, returns)
         print(update, stats.summary())
 
 

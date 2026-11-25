@@ -7,6 +7,7 @@ from torch.distributions import Categorical
 import arena
 
 
+# Based on: https://github.com/vwxyzjn/cleanrl/blob/master/cleanrl/ppo.py
 class Agent(nn.Module):
     """Actor and critic as two separate MLPs, with no shared layers."""
 
@@ -33,6 +34,7 @@ class Agent(nn.Module):
         """Return the value of each obs, shape `(N,)`."""
         return self.critic(obs).squeeze(-1)
 
+    # Based on: https://github.com/DLR-RM/stable-baselines3/blob/master/stable_baselines3/common/distributions.py
     def act(
         self,
         obs: Tensor,
