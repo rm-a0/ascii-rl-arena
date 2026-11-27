@@ -4,10 +4,10 @@
 ARGS ?=
 
 .DEFAULT_GOAL := help
-.PHONY: help build run kitty boxes test lint fmt py smoke sb3 clean
+.PHONY: help build run kitty boxes test lint fmt py smoke sb3 ppo eval plot experiment clean
 
 help: ## List the commands.
-	@grep -E '^[a-z0-9]+:.*## ' $(MAKEFILE_LIST) | awk -F ':.*## ' '{printf "  make %-6s %s\n", $$1, $$2}'
+	@grep -E '^[a-z0-9]+:.*## ' $(MAKEFILE_LIST) | awk -F ':.*## ' '{printf "  make %-10s %s\n", $$1, $$2}'
 
 build: ## Build every crate and example.
 	cargo build --workspace --all-targets
@@ -39,6 +39,18 @@ smoke: ## Step random actions through the Python env and print the speed.
 
 sb3: ## Train the ready-made SB3 PPO to check the env. Pass flags with ARGS.
 	uv run python -m train.sb3 $(ARGS)
+
+ppo: ## Train our own PPO. Pass flags with ARGS.
+	uv run python -m train.ppo $(ARGS)
+
+eval: ## Test every model in runs/ on held-out fights.
+	uv run python -m train.eval $(ARGS)
+
+plot: ## Draw the training curves of runs/ into runs/plots/.
+	uv run python -m train.plot $(ARGS)
+
+experiment: ## Train all methods on 5 seeds, then eval and plot. About 1-2 hours.
+	scripts/experiment.sh $(ARGS)
 
 clean: ## Remove build output.
 	cargo clean

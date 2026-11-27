@@ -6,6 +6,52 @@ learning agent controls the boss and learns to fight its opponent.
 Movement, the world and a first renderer exist. This file lists the decisions made so far
 and the questions that are still open.
 
+## Experiment
+
+The experiment compares two variants of our own actor-critic training on the same env,
+with Stable-Baselines3 (SB3) as the reference. The agent is the wanderer. Its opponent is
+the scripted moth.
+
+| Method | Command name | Update on each rollout of 4096 steps |
+| -- | -- | -- |
+| PPO | `ppo` | 4 epochs of 4 minibatches, clipped ratio. `train/ppo.py` |
+| Actor-critic | `ac` | 1 gradient step on the whole rollout. The ratio stays 1, so the clip never acts |
+| SB3 PPO | `sb3` | The same settings as `ppo`, in SB3. `train/sb3.py` |
+
+All methods use the same network size (two hidden layers of 64) and the same settings in
+`train/config.py`. Every setting is also a command-line flag: add `--help` to a command.
+
+### Install
+
+The install needs no admin rights. It puts Rust and uv into your home folder and the
+Python packages into `.venv`. It needs a C compiler (`cc`), which Rust uses as its linker.
+
+```sh
+scripts/install.sh
+export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$PATH"   # in each new shell
+```
+
+### Run
+
+| Command | What it does | Time on 12 threads |
+| -- | -- | -- |
+| `SEEDS=0 scripts/experiment.sh 500000` | Short variant: each method on seed 0 for 0.5M steps, then test and plot | 1 min |
+| `make experiment` | Each method on seeds 0 to 4 for 10M steps, then test and plot | about 1 hour |
+| `uv run python -m train.ppo --seed 3` | One training run | 10–15 min |
+| `make eval` | Test every model in `runs/` | 1 min |
+| `make plot` | Draw the training curves into `runs/plots/` | seconds |
+
+Each run writes `runs/<method>/seed<k>/`: `config.json`, `progress.csv` (one row per
+update), the model (`model.pt` or SB3's `model.zip`) and, after the test, `eval.json`.
+
+### Seeds and the test
+
+The seed sets the network weights and the fights. Training run `k` plays fight seeds
+from `k × 10⁹` upward, so no two runs share a fight. The test plays 1000 fights with
+seeds from 2⁶², which no training run reaches. No setting was tuned on the test fights.
+The test reports the greedy policy (the likeliest option in each slot) and the sampled
+policy.
+
 ## Goals
 
 - Learn Rust by writing the simulation by hand.
@@ -21,7 +67,7 @@ and the questions that are still open.
 | -- | -- |
 | Language | Rust for the simulation and the renderer. Python for training |
 | View | 2D side view: one floor, gravity, jump, dash |
-| Learner | The boss |
+| Learner | The wanderer first, against the scripted moth boss. The boss learns later |
 | Opponents | Any fighter can face any other. Each fighter gets its actions from a controller: keyboard, scripted bot or trained policy |
 | Order of work | Easiest setup first: a scripted boss against a human, then a learning boss against a scripted player bot. Human opponents and other learning agents come after that |
 | First mechanics | Hollow Knight: the Knight as the player and Hornet as the boss |
